@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from mySpace_app import views
 
 urlpatterns = [
+    path('',views.ShowLoginPage,name="show_login"),
     path('admin/', admin.site.urls),
 ]
