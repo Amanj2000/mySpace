@@ -1,2 +1,7 @@
 # ignore node modules
 node_modules
+
+#ignore virtualenv files
+pyvenv.cfg
+Scripts/
+Lib/
