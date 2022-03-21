@@ -18,6 +18,13 @@ from django.urls import path
 from mySpace_app import views
 
 urlpatterns = [
-    path('',views.showLoginPage,name="show_login"),
+    path('',views.show_login_page,name="show_login"),
+    path('doLogin',views.do_login,name="do_login"),
     path('admin/', admin.site.urls),
+
+    #Faculty URLs
+    path('faculty_home', views.faculty_home, name="faculty_home"),
+
+    #Student URLs
+    path('student_home', views.student_home, name="student_home"),
 ]
