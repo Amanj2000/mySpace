@@ -149,5 +149,3 @@ class Inst_Publish(models.Model):
 class Sec_Can_Read(models.Model):
     section = models.ForeignKey(Section, on_delete=models.CASCADE)
     notice = models.ForeignKey(Notice, on_delete=models.CASCADE)
-
-
