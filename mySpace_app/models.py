@@ -1,3 +1,4 @@
+from tkinter import CASCADE
 from django.db import models
 from django.contrib.auth.models import User
 import datetime
@@ -18,7 +19,7 @@ class Student(models.Model):
     phone = models.CharField(max_length=10)
     roll_no = models.CharField(max_length = 7)
     batch = models.PositiveSmallIntegerField(default = datetime.datetime.now().year)
-    dept = models.ForeignKey(Dept, on_delete=models.SET_NULL)
+    dept = models.ForeignKey(Dept, null=True, on_delete=models.SET_NULL)
 
 class Faculty(models.Model):
     class Meta:
@@ -33,7 +34,7 @@ class Faculty(models.Model):
     phone = models.CharField(max_length=10)
     rank = models.CharField(max_length=20)
     research_area = models.CharField(default= 'Technology', max_length=20)
-    dept = models.ForeignKey(Dept, on_delete=models.SET_NULL)
+    dept = models.ForeignKey(Dept, null=True, on_delete=models.SET_NULL)
 
 
 class Admin(models.Model):
@@ -63,15 +64,15 @@ class Notice(models.Model):
     content = models.TextField()
 
 class Notice_Tag(models.Model):
-    notice = models.ForeignKey(Notice)
-    tag = models.ForeignKey(Tag)
+    notice = models.ForeignKey(Notice, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
 
 class Cert_Req(models.Model):
-    type = models.CharField(maxLength=20)
+    type = models.CharField(max_length=20)
     add_info = models.TextField()
 
-    response_type = models.TextChoices('Approved', 'Denied', 'Pending')
-    response = models.CharField(choices=response_type, max_length=10)
+    response_type = models.TextChoices('Response', 'Approved Denied Pending')
+    response = models.CharField(choices=response_type.choices, max_length=10)
 
 class Sem_Fee(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -106,11 +107,11 @@ class Inst_Teaches(models.Model):
 class Stud_Takes(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    quiz1_score = models.IntegerField(NULL=True)
-    quiz2_score = models.IntegerField(NULL=True)
-    midterm_score = models.IntegerField(NULL=True)
-    endterm_score = models.IntegerField(NULL=True)
-    assignment_score = models.IntegerField(NULL=True)
+    quiz1_score = models.IntegerField(null=True)
+    quiz2_score = models.IntegerField(null=True)
+    midterm_score = models.IntegerField(null=True)
+    endterm_score = models.IntegerField(null=True)
+    assignment_score = models.IntegerField(null=True)
 
 
 class Inst_Of(models.Model):
@@ -122,28 +123,28 @@ class Stud_Part_Of(models.Model):
     section = models.ForeignKey(Section, on_delete=models.CASCADE)
 
 class Inst_Req(models.Model):
-    faculty = models.ForeignKey(Faculty)
-    cert_req = models.ForeignKey(Cert_Req)
+    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
+    cert_req = models.ForeignKey(Cert_Req, on_delete=models.CASCADE)
     req_date = models.DateTimeField(default=datetime.datetime.now())
 
 class Stud_Req(models.Model):
-    student = models.ForeignKey(Student)
-    cert_req = models.ForeignKey(Cert_Req)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    cert_req = models.ForeignKey(Cert_Req, on_delete=models.CASCADE)
     req_date = models.DateTimeField(default=datetime.datetime.now())
 
 class Admin_Review(models.Model):
-    admin = models.ForeignKey(Admin)
-    cert_req = models.ForeignKey(Cert_Req)
+    admin = models.ForeignKey(Admin, on_delete=models.CASCADE)
+    cert_req = models.ForeignKey(Cert_Req, on_delete=models.CASCADE)
     review_date = models.DateTimeField(default=datetime.datetime.now())
 
 class Admin_Publish(models.Model):
-    admin = models.ForeignKey(Admin)
-    notice = models.ForeignKey(Notice)
+    admin = models.ForeignKey(Admin, on_delete=models.CASCADE)
+    notice = models.ForeignKey(Notice, on_delete=models.CASCADE)
     published_on = models.DateTimeField(default=datetime.datetime.now())
     
 class Inst_Publish(models.Model):
-    faculty = models.ForeignKey(Faculty)
-    notice = models.ForeignKey(Notice)
+    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
+    notice = models.ForeignKey(Notice, on_delete=models.CASCADE)
     published_on = models.DateTimeField(default=datetime.datetime.now())
 
 class Sec_Can_Read(models.Model):
