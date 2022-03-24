@@ -48,7 +48,7 @@ class Admin(models.Model):
     designation = models.CharField(max_length=20)
 
 class Course(models.Model):
-    course_name = models.CharField(max_length=20)
+    course_name = models.CharField(max_length=40)
     grade = models.PositiveSmallIntegerField()
     dept = models.ForeignKey(Dept, on_delete=models.CASCADE)
 
@@ -70,7 +70,7 @@ class Cert_Req(models.Model):
     type = models.CharField(maxLength=20)
     add_info = models.TextField()
 
-    response_type = models.TextChoices('Aproved', 'Denied', 'Pending')
+    response_type = models.TextChoices('Approved', 'Denied', 'Pending')
     response = models.CharField(choices=response_type, max_length=10)
 
 class Sem_Fee(models.Model):
