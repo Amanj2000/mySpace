@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from .models import Student
+from .models import User, Student, Faculty, Dept, Course, Section, Notice, CertReq, SemFee, MessFee, Result, StudTakes
 
 # Create your views here.
 def show_login_page(request):
@@ -29,9 +29,11 @@ def do_login(request):
 #Faculty views
 
 def faculty_home(request):
-    return render(request, "faculty_templates/faculty_home.html")
+    user_obj=User.objects.get(id=request.user.id)
+    return render(request,"faculty_templates/faculty_home.html",{"name":user_obj.first_name})
 
 #Student views
 
 def student_home(request):
-    return render(request, "student_templates/student_home.html")
+    user_obj=User.objects.get(id=request.user.id)
+    return render(request,"student_templates/student_home.html",{"name":user_obj.first_name})
