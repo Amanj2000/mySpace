@@ -82,7 +82,7 @@ class MessFee(models.Model):
 class Result(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     semester = models.PositiveSmallIntegerField()
-    result = models.FileField()
+    result = models.FileField(upload_to='media/')
 
     class Meta:
         unique_together = (('student', 'semester'), )
