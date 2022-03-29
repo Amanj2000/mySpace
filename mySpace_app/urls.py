@@ -26,5 +26,8 @@ urlpatterns = [
     path('student/<str:username>/fee-payment/tuition', views.student_fee_payment_tuition, name="student_fee_details_tuition"),
 
     #Faculty URLs
-    path('faculty', views.faculty_home, name="faculty_home"),
+    path('faculty', views.faculty, name="faculty"),
+    path('faculty/<str:username>', views.faculty_home, name="faculty_home"),
+    path('faculty/<str:username>/profile', views.faculty_profile, name="faculty_profile"),
+
 ]
