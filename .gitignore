@@ -2,3 +2,5 @@
 pyvenv.cfg
 Scripts/
 Lib/
+db.sqlite3
+*.pyc
