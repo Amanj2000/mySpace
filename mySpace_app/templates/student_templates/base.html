@@ -111,22 +111,12 @@
 <div class="wrapper">
 
   <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
-      </li>
-    </ul>
-    <h4 class="title-c1" style="margin-left: 10px; margin-top: 5px;">
-      <span class="desktop">Сурагчийн самбар</span>
-      <span class="mobile">Сурагч</span>
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light" style="margin-left: 0;">
+    <h4 class="title-c1" style="margin-top: 5px;">
+      <span class="desktop">Student Home</span>
+      <span class="mobile">Student</span>
     </h4>
     <ul class="navbar-nav ml-auto">
-      <li class="nav-item d-flex">
-        <a class="nav-link">
-          <span class="desktop-demo">DEMO</span>
-        <a>
-      </li>
       <!-- Notifications -->
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
@@ -139,9 +129,9 @@
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           {% if notifications.count == 1 %}
-          <span class="dropdown-item dropdown-header">{{notifications.count}} Мэдэгдэл</span>
+          <span class="dropdown-item dropdown-header">{{notifications.count}} Notification</span>
           {% else %}
-          <span class="dropdown-item dropdown-header">{{notifications.count}} Мэдэгдлүүд</span>
+          <span class="dropdown-item dropdown-header">{{notifications.count}} Notifications</span>
           {% endif %}
           <div class="dropdown-divider"></div>
           <a href="/student_all_notification" class="dropdown-item">
@@ -156,7 +146,7 @@
             <!-- <span class="float-right text-muted text-sm">{{a.created_at | naturaltime}}</span> -->
           </a>
           <div class="dropdown-divider"></div>
-          <a href="/student_all_notification" class="dropdown-item dropdown-footer">Бүх мэдэгдлүүдийг харах</a>
+          <a href="/all_notification" class="dropdown-item dropdown-footer">View all notifications</a>
         </div>
       </li>
       <!-- Notifications end -->
@@ -168,9 +158,9 @@
         </a>
         <div class="btn-group">
           <div class="dropdown-menu">
-            <a class="dropdown-item" href="{% url 'student_profile' %}"><i class="fas fa-user"></i> Профайл</a>
+            <a class="dropdown-item" href="{% url 'student_profile' user.username %}"><i class="fas fa-user"></i> Profile</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{% url 'logout' %}" style="color: #ce0000;"><i class="fas fa-sign-out-alt"></i> Гарах</a>
+            <a class="dropdown-item" href="{% url 'logout' %}" style="color: #ce0000;"><i class="fas fa-sign-out-alt"></i> Logout</a>
           </div>
         </div>
       </li>
@@ -178,11 +168,9 @@
     </ul>
   </nav>
 
-  <!-- Main Sidebar Container -->
-    {% include 'student_template/sidebar_template.html' with user=user id=id %}
 
   <!-- Content Wrapper. Contains page content -->
-   <div class="content-wrapper">
+   <div class="content-wrapper" style="margin-left: 0;">
     <div class="content-header">
       <div class="container-fluid">
         <div id="lb-back">
@@ -197,7 +185,7 @@
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a class="btn btn-primary shadow-custom font-weight-bold" href="{% url 'student_home' %}"><i class="nav-icon fas fa-tachometer-alt mr-2"></i>Нүүр</a></li>
+              <li class="breadcrumb-item"><a class="btn btn-primary shadow-custom font-weight-bold" href="{% url 'student_home' user %}"><i class="nav-icon fas fa-tachometer-alt mr-2"></i>Home</a></li>
             </ol>
           </div>
         </div>
@@ -205,7 +193,7 @@
     </div>
      {% block main_content %}{% endblock main_content %}
   </div>
-    {% include 'student_template/footer.html' %}
+    {% include 'student_templates/footer.html' %}
 
 </div>
 <!-- jQuery -->

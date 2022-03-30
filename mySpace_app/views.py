@@ -10,7 +10,7 @@ from .models import InstPublish, InstTeaches, SecCanRead, StudPartOf, User, Stud
 # Create your views here.
 def home(request):
     if request.user.is_anonymous:
-        return redirect("/login") 
+        return redirect("/login")
     elif request.user.is_superuser:
         return redirect('/admin')
     elif Student.objects.filter(user=request.user).exists():
@@ -32,6 +32,7 @@ def loginUser(request):
 
 def logoutUser(request):
     logout(request)
+    print("logout")
     return redirect('/login')
 
 #Faculty views
@@ -50,20 +51,8 @@ def faculty_home(request, username):
 def faculty_profile(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
-    user = Faculty.objects.get(user=request.user)
-    contents = {
-        'username': user.username,
-        'first_name': user.first_name,
-        'last_name': user.last_name,
-        'email': user.email,
-        'dob': user.dob,
-        'gender': user.gender,
-        'phone': user.phone,
-        'rank': user.rank,
-        'research_area': user.research_area,
-        'dept': user.dept
-    }
-    return render(request, 'faculty_templates/faculty_profile.html', contents)
+    faculty = Faculty.objects.get(user=request.user)
+    return render(request, 'faculty_templates/faculty_profile.html', {'faculty' : faculty})
 
 def faculty_course_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
@@ -74,7 +63,7 @@ def faculty_course_home(request, username):
     course_name = []
     for entry in teaches:
         course_name.append(Course.objects.get(id=entry.course).course_name)
-    
+
     return render(request, 'faculty_template/faculty_course_home.html', course_name)
 
 def faculty_course_perf(request, username, course_id):
@@ -92,12 +81,12 @@ def faculty_notice_home(request, username):
     noticeList = []
     for entry in published:
         noticeList.append([Notice.objects.get(id=entry.notice), entry.published_on])
-    
+
     return render(request, 'faculty_templates/faculty_notice_home.html', noticeList)
 
 def faculty_notice_publish(request, username):
     if request.user.is_anonymous: return redirect('/login')
-    
+
     user = Faculty.objects.get(user=request.user)
     if request.method == 'POST':
         notice = Notice(notice_name=request.POSt.get('notice_name'), content=request.POST.get('content'))
@@ -109,7 +98,7 @@ def faculty_notice_publish(request, username):
 
 def faculty_notice_edit(request, username, notice_id):
     if request.user.is_anonymous: return redirect('/login')
-    
+
     if request.method == 'POST':
         notice = Notice.objects.get(id=notice_id)
         notice.notice_name = request.POSt.get('notice_name')
@@ -118,7 +107,7 @@ def faculty_notice_edit(request, username, notice_id):
         return redirect(f'/faculty/{username}/notice')
     else:
         return render(request, 'faculty_templates/faculty_notice_publish.html')
-    
+
 
 
 #Student views
@@ -127,7 +116,7 @@ def student(request):
     if request.user.is_anonymous: return redirect('/login')
 
     return redirect(f'/student/{request.user.username}')
-    
+
 def student_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
@@ -137,20 +126,8 @@ def student_home(request, username):
 def student_profile(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
-    user = Student.objects.get(user=request.user)
-    contents = {
-        'username': user.username,
-        'first_name': user.first_name,
-        'last_name': user.last_name,
-        'email': user.email,
-        'dob': user.dob,
-        'gender': user.gender,
-        'phone': user.phone,
-        'roll_no': user.roll_no,
-        'batch': user.batch,
-        'dept': user.dept
-    }
-    return render(request, 'student_templates/student_profile.html', contents)
+    student = Student.objects.get(user=request.user)
+    return render(request, 'student_templates/student_profile.html', {'student' : student})
 
 def student_result_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
@@ -175,10 +152,10 @@ def student_result(request, username, sem):
     response = HttpResponse(path, content_type=mime_type)
     response['Content-Disposition'] = "attachment; filename=%s" % filename
     return response
-    
+
 def student_perf_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
-    
+
     user = Student.objects.get(user=request.user)
     takes = StudTakes.objects.filter(student=user.id)
 
@@ -189,21 +166,21 @@ def student_perf_home(request, username):
 
 def student_perf(request, username, course_id):
     if request.user.is_anonymous: return redirect('/login')
-    
+
     user = Student.objects.get(user=request.user)
     course = StudTakes.objects.get(student=user.id, course=course_id)
     contents = {
-        'quiz1': course.quiz1_score, 
-        'quiz2': course.quiz2_score, 
-        'midterm': course.midterm_score, 
-        'endterm': course.endterm_score, 
-        'assignment': course.assignment_score, 
+        'quiz1': course.quiz1_score,
+        'quiz2': course.quiz2_score,
+        'midterm': course.midterm_score,
+        'endterm': course.endterm_score,
+        'assignment': course.assignment_score,
     }
     return render(request, 'student_templates/student_perf.html', contents)
 
 def student_notice_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
-    
+
     user = Student.objects.get(user=request.user)
     partOf = StudPartOf.objects.get(student=user.id)
     canRead = SecCanRead.objects.filter(section=partOf.section)
@@ -215,7 +192,7 @@ def student_notice_home(request, username):
 
 def student_notice(request, username, notice_id):
     if request.user.is_anonymous: return redirect('/login')
-    
+
     user = Student.objects.get(user=request.user)
     partOf = StudPartOf.objects.get(student=user.id)
     notice = SecCanRead.objects.filter(section=partOf.section, notice=notice_id)
@@ -225,15 +202,15 @@ def student_notice(request, username, notice_id):
         'content': notice.notice_content
     }
     return render(request, 'student_templates/student_notice_home.html', contents)
-    
+
 def student_fee_payment_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
-    
+
     return render(request, 'student_templates/student_fee_payment_home')
 
 def student_fee_payment_mess(request, username):
     if request.user.is_anonymous: return redirect('/login')
-    
+
     user = Student.objects.get(user=request.user)
     mess_fee_entries = MessFee.objects.filter(student=user.id)
 
@@ -241,7 +218,7 @@ def student_fee_payment_mess(request, username):
 
 def student_fee_payment_tuition(request, username):
     if request.user.is_anonymous: return redirect('/login')
-    
+
     user = Student.objects.get(user=request.user)
     sem_fee_entries = SemFee.objects.filter(student=user.id)
 

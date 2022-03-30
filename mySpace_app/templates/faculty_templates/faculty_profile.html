@@ -1,0 +1,75 @@
+{% extends 'faculty_templates/base.html' %}
+{% block page_title %}
+Edit information
+{% endblock page_title %}
+{% block main_content %}
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-primary">
+          <div class="card-header d-flex" style="display: flex; align-items: center;">
+            <h3 class="card-title ml-3">Edit</h3>
+          </div>
+          <!--form role="form" action="% url 'student_profile_save' %}" method="post" enctype="multipart/form-data"-->
+            {% csrf_token %}
+            <div class="card-body">
+              <div class="form-group">
+                <label>Username</label>
+                <input type="text" class="form-control" name="username" value="{{ user.username }}">
+              </div>
+              <div class="form-group">
+                <label>E-mail</label>
+                <input type="text" class="form-control" name="email" value="{{ user.email }}">
+              </div>
+              <div class="form-group">
+                <label>First name</label>
+                <input type="text" class="form-control" name="first_name" value="{{ user.first_name }}">
+              </div>
+              <div class="form-group">
+                <label>Last name</label>
+                <input type="text" class="form-control" name="last_name" value="{{ user.last_name }}">
+              </div>
+              <div class="form-group">
+                <label>Date of birth</label>
+                <input type="text" class="form-control" name="dob" value="{{ faculty.dob|date:'d M Y' }}">
+              </div>
+              <div class="form-group">
+                <label>Gender</label>
+                <input type="text" class="form-control" name="gender" value="{{ faculty.gender }}">
+              </div>
+              <div class="form-group">
+                <label>Research Area</label>
+                <input type="text" class="form-control" name="research_area" value="{{ faculty.research_area }}">
+              </div>
+              <div class="form-group">
+                <label>Rank</label>
+                <input type="text" class="form-control" name="rank" value="{{ faculty.rank }}">
+              </div>
+              <div class="form-group">
+                <label>Department</label>
+                <input type="text" class="form-control" name="dept" value="{{ faculty.dept }}">
+              </div>
+              <div class="form-group">
+                {% if messages %}
+                {% for message in messages %}
+                {% if message.tags == 'error' %}
+                <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+                {% endif %}
+                {% if message.tags == 'success' %}
+                <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+              </div>
+            </div>
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary btn-block shadow-custom">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock main_content %}
