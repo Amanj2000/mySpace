@@ -1,0 +1,35 @@
+{% extends 'student_templates/base.html' %}
+{% block page_title %}
+<i class="nav-icon fas fa-tachometer-alt"></i> Home
+{% endblock page_title %}
+
+
+{% block main_content %}
+    <div class=>
+        {% if total_entries == 0 %}
+            <p> No Record Available </p>
+        {% else %}
+            <table>
+            <tr>
+                <th>Year</th>
+                <th>Month</th>
+                <th>Due</th>
+                <th>Paid</th>
+            </tr>
+            {% for entry in all_entries %}
+            <tr>
+                <td>{{entry.year}}</td>
+                <td>{{entry.month}}</td>
+                <td>{{entry.due}}</td>
+                <td>{{entry.paid}}</td>
+            </tr>  
+            {% endfor %}
+            </table>
+            <div>
+                <p>Total Due: {{total_due}}<br>
+                   Total Paid: {{total_paid}}<br>
+                   Due Remaining: {{remaining}}</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock main_content %}
