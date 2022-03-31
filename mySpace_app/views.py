@@ -62,11 +62,11 @@ def faculty_course_home(request, username):
     user = Faculty.objects.get(user=request.user)
     teaches = InstTeaches.objects.filter(faculty=user)
 
-    course_name = []
+    courses = []
     for entry in teaches:
-        course_name.append(Course.objects.get(id=entry.course).course_name)
+        courses.append(entry.course)
 
-    return render(request, 'faculty_template/faculty_course_home.html', course_name)
+    return render(request, 'faculty_template/faculty_course_home.html', {'courses': courses})
 
 def faculty_course_perf(request, username, course_id):
     if request.user.is_anonymous: return redirect('/login')
@@ -82,9 +82,9 @@ def faculty_notice_home(request, username):
 
     noticeList = []
     for entry in published:
-        noticeList.append([Notice.objects.get(id=entry.notice), entry.published_on])
+        noticeList.append([entry.notice, entry.published_on])
 
-    return render(request, 'faculty_templates/faculty_notice_home.html', noticeList)
+    return render(request, 'faculty_templates/faculty_notice_home.html', {noticeList: noticeList})
 
 def faculty_notice_publish(request, username):
     if request.user.is_anonymous: return redirect('/login')
@@ -93,7 +93,7 @@ def faculty_notice_publish(request, username):
     if request.method == 'POST':
         notice = Notice(notice_name=request.POSt.get('notice_name'), content=request.POST.get('content'))
         notice.save()
-        InstPublish(faculty=user, notice=notice.id).save()
+        InstPublish(faculty=user, notice=notice).save()
         return redirect(f'/faculty/{username}/notice')
     else:
         return render(request, 'faculty_templates/faculty_notice_publish.html')
