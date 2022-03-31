@@ -16,56 +16,40 @@ Edit information
             <div class="card-body">
               <div class="form-group">
                 <label>Username</label>
-                <input type="text" class="form-control" name="username" value="{{ user.username }}">
+                <input type="text" class="form-control" name="username" value="{{ user.username }}" disabled="disabled">
               </div>
               <div class="form-group">
                 <label>E-mail</label>
-                <input type="text" class="form-control" name="email" value="{{ user.email }}">
+                <input type="text" class="form-control" name="email" value="{{ user.email }}" disabled="disabled">
               </div>
               <div class="form-group">
                 <label>First name</label>
-                <input type="text" class="form-control" name="first_name" value="{{ user.first_name }}">
+                <input type="text" class="form-control" name="first_name" value="{{ user.first_name }}" disabled="disabled">
               </div>
               <div class="form-group">
                 <label>Last name</label>
-                <input type="text" class="form-control" name="last_name" value="{{ user.last_name }}">
+                <input type="text" class="form-control" name="last_name" value="{{ user.last_name }}" disabled="disabled">
               </div>
               <div class="form-group">
                 <label>Date of birth</label>
-                <input type="text" class="form-control" name="dob" value="{{ student.dob|date:'d M Y' }}">
+                <input type="text" class="form-control" name="dob" value="{{ student.dob|date:'d M Y' }}" disabled="disabled">
               </div>
               <div class="form-group">
                 <label>Gender</label>
-                <input type="text" class="form-control" name="gender" value="{{ student.gender }}">
+                <input type="text" class="form-control" name="gender" value="{{ student.gender }}" disabled="disabled">
               </div>
               <div class="form-group">
                 <label>Roll No.</label>
-                <input type="text" class="form-control" name="roll_no" value="{{ student.roll_no }}">
+                <input type="text" class="form-control" name="roll_no" value="{{ student.roll_no }}" disabled="disabled">
               </div>
               <div class="form-group">
                 <label>Batch</label>
-                <input type="text" class="form-control" name="batch" value="{{ student.batch }}">
+                <input type="text" class="form-control" name="batch" value="{{ student.batch }}" disabled="disabled">
               </div>
               <div class="form-group">
                 <label>Department</label>
-                <input type="text" class="form-control" name="dept" value="{{ student.dept }}">
+                <input type="text" class="form-control" name="dept" value="{{ student.dept }}" disabled="disabled">
               </div>
-              <div class="form-group">
-                {% if messages %}
-                {% for message in messages %}
-                {% if message.tags == 'error' %}
-                <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
-                {% endif %}
-                {% if message.tags == 'success' %}
-                <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
-                {% endif %}
-                {% endfor %}
-                {% endif %}
-              </div>
-            </div>
-            <div class="card-footer">
-              <button type="submit" class="btn btn-primary btn-block shadow-custom">Save</button>
-            </div>
           </form>
         </div>
       </div>

@@ -164,7 +164,7 @@ def student_perf_home(request, username):
     all_course = []
     for entry in takes:
         all_course.append(entry.course)
-    return render(request, 'student_templates/student_perf_home.html', {'course': all_course})
+    return render(request, 'student_templates/student_perf_home.html', {'courses': all_course})
 
 def student_perf(request, username, course_id):
     if request.user.is_anonymous: return redirect('/login')
@@ -173,13 +173,13 @@ def student_perf(request, username, course_id):
     _course = Course.objects.get(id=course_id)
     course = StudTakes.objects.get(student=user, course=_course)
     contents = {
-        'Quiz1': course.quiz1_score if course.quiz1_score else '-',
-        'Quiz2': course.quiz2_score if course.quiz2_score else '-',
-        'Mid-term': course.midterm_score if course.midterm_score else '-',
-        'End-term': course.endterm_score if course.endterm_score else '-',
-        'Assignment': course.assignment_score if course.assignment_score else '-'
+        'quiz1': course.quiz1_score if course.quiz1_score else '-',
+        'quiz2': course.quiz2_score if course.quiz2_score else '-',
+        'midterm': course.midterm_score if course.midterm_score else '-',
+        'endterm': course.endterm_score if course.endterm_score else '-',
+        'assignment': course.assignment_score if course.assignment_score else '-'
     }
-    return render(request, 'student_templates/student_perf.html', {'content': contents})
+    return render(request, 'student_templates/student_perf.html', contents)
 
 def student_notice_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
