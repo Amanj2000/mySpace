@@ -1,0 +1,17 @@
+{% extends 'student_templates/base.html' %}
+{% block page_title %}
+<i class="nav-icon fas fa-tachometer-alt"></i> Home
+{% endblock page_title %}
+
+
+{% block main_content %}
+    {% for key, value in content.items %}
+       <div>
+            {% if value %}
+                <p> {{key}}: {{value}} </p>
+            {% else %}
+                <p> {{key}}: - </p>
+            {% endif %}
+       </div>
+    {% endfor %}
+{% endblock main_content %}

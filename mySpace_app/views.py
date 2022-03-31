@@ -93,7 +93,7 @@ def faculty_notice_publish(request, username):
     if request.method == 'POST':
         notice = Notice(notice_name=request.POSt.get('notice_name'), content=request.POST.get('content'))
         notice.save()
-        InstPublish(faculty=user.id, notice=notice.id).save()
+        InstPublish(faculty=user, notice=notice.id).save()
         return redirect(f'/faculty/{username}/notice')
     else:
         return render(request, 'faculty_templates/faculty_notice_publish.html')
@@ -135,8 +135,8 @@ def student_result_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
     user = Student.objects.get(user=request.user)
-    result = Result.objects.filter(student=user.id)
-    return render(request, 'student_templates/student_result.html', len(result))
+    result = Result.objects.filter(student=user)
+    return render(request, 'student_templates/student_result.html', {'sem': range(1, len(result)+1)})
 
 def student_result(request, username, sem):
     if request.user.is_anonymous: return redirect('/login')
@@ -159,18 +159,19 @@ def student_perf_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
     user = Student.objects.get(user=request.user)
-    takes = StudTakes.objects.filter(student=user.id)
+    takes = StudTakes.objects.filter(student=user)
 
-    course_name = []
+    all_course = []
     for entry in takes:
-        course_name.append(Course.objects.get(id=entry.course).name)
-    return render(request, 'student_templates/student_perf_home.html', course_name)
+        all_course.append(entry.course)
+    return render(request, 'student_templates/student_perf_home.html', {'course': all_course})
 
 def student_perf(request, username, course_id):
     if request.user.is_anonymous: return redirect('/login')
 
     user = Student.objects.get(user=request.user)
-    course = StudTakes.objects.get(student=user.id, course=course_id)
+    _course = Course.objects.get(id=course_id)
+    course = StudTakes.objects.get(student=user, course=_course)
     contents = {
         'quiz1': course.quiz1_score,
         'quiz2': course.quiz2_score,
@@ -178,13 +179,13 @@ def student_perf(request, username, course_id):
         'endterm': course.endterm_score,
         'assignment': course.assignment_score,
     }
-    return render(request, 'student_templates/student_perf.html', contents)
+    return render(request, 'student_templates/student_perf.html', {'content': contents})
 
 def student_notice_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
     user = Student.objects.get(user=request.user)
-    partOf = StudPartOf.objects.get(student=user.id)
+    partOf = StudPartOf.objects.get(student=user)
     canRead = SecCanRead.objects.filter(section=partOf.section)
 
     all_notice = []
@@ -196,7 +197,7 @@ def student_notice(request, username, notice_id):
     if request.user.is_anonymous: return redirect('/login')
 
     user = Student.objects.get(user=request.user)
-    partOf = StudPartOf.objects.get(student=user.id)
+    partOf = StudPartOf.objects.get(student=user)
     notice = SecCanRead.objects.filter(section=partOf.section, notice=notice_id)
 
     contents = {
@@ -214,7 +215,7 @@ def student_fee_payment_mess(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
     user = Student.objects.get(user=request.user)
-    mess_fee_entries = MessFee.objects.filter(student=user.id)
+    mess_fee_entries = MessFee.objects.filter(student=user)
 
     return render(request, 'student_templates/student_fee_payment_mess', mess_fee_entries)
 
@@ -222,6 +223,6 @@ def student_fee_payment_tuition(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
     user = Student.objects.get(user=request.user)
-    sem_fee_entries = SemFee.objects.filter(student=user.id)
+    sem_fee_entries = SemFee.objects.filter(student=user)
 
     return render(request, 'student_templates/student_fee_payment_tuition', sem_fee_entries)

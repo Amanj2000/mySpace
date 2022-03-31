@@ -1,0 +1,16 @@
+{% extends 'student_templates/base.html' %}
+{% block page_title %}
+<i class="nav-icon fas fa-tachometer-alt"></i> Home
+{% endblock page_title %}
+
+
+{% block main_content %}
+    {% for course in course %}
+        <div class="small-box bg-success shadow-custom" style="background-color: rgb(0, 181, 253) !important;">
+            <div class="inner">
+                <h3>{{ course.course_name }}</h3>
+            </div>
+            <a href="/student/{{user.username}}/perf/{{ course.id }}/" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    {% endfor %}
+{% endblock main_content %}
