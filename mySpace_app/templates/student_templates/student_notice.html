@@ -1,0 +1,16 @@
+{% extends 'student_templates/base.html' %}
+{% block page_title %}
+<i class="nav-icon fas fa-tachometer-alt"></i> Home
+{% endblock page_title %}
+
+
+{% block main_content %}
+    <div>
+        <div class="text-center">
+            <h1>{{ name }}</h1>
+        </div>
+        <div class="text-center">
+            <p>{{content}}</p>
+        </div>
+    </div>
+{% endblock main_content %}

@@ -7,6 +7,9 @@ import datetime
 class Dept(models.Model):
     dept_name = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.dept_name
+
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete = models.CASCADE, primary_key=True)
     dob = models.DateField(default = datetime.date(1950, 1, 1))
@@ -19,6 +22,9 @@ class Student(models.Model):
     roll_no = models.CharField(max_length = 7)
     batch = models.PositiveSmallIntegerField(default = datetime.datetime.now().year)
     dept = models.ForeignKey(Dept, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.user.username
 
 class Faculty(models.Model):
     class Meta:
@@ -35,24 +41,45 @@ class Faculty(models.Model):
     research_area = models.CharField(default= 'Technology', max_length=20)
     dept = models.ForeignKey(Dept, null=True, on_delete=models.SET_NULL)
 
+    def __str__(self):
+        return self.user.username
+
 class Course(models.Model):
-    course_name = models.CharField(max_length=40)
+    course_name = models.CharField(max_length=40, unique=True)
     grade = models.PositiveSmallIntegerField()
     dept = models.ForeignKey(Dept, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.course_name
+
 class Section(models.Model):
-    sec_name = models.CharField(max_length=10)
+    sec_name = models.CharField(max_length=10, unique=True)
+
+    def __str__(self):
+        return self.sec_name
 
 class Tag(models.Model):
-    tag_name = models.CharField(max_length=10)
+    tag_name = models.CharField(max_length=10, unique=True)
+
+    def __str__(self):
+        return self.tag_name
 
 class Notice(models.Model):
     notice_name = models.CharField(max_length=255)
     content = models.TextField()
 
+    def __str__(self):
+        return self.notice_name
+
 class NoticeTag(models.Model):
     notice = models.ForeignKey(Notice, on_delete=models.CASCADE)
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (('notice', 'tag'), )
+
+    def __str__(self):
+        return self.notice.notice_name + '_' + self.tag.tag_name
 
 class CertReq(models.Model):
     type = models.CharField(max_length=20)
@@ -64,20 +91,29 @@ class CertReq(models.Model):
 class SemFee(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     semester = models.PositiveSmallIntegerField()
-    tuition_fee = models.IntegerField(blank=True)
-    hostel_fee = models.IntegerField(blank=True)
+    tuition_fee = models.IntegerField()
+    hostel_fee = models.IntegerField()
+    tuition_fee_paid = models.IntegerField(null=True, blank=True)
+    hostel_fee_paid = models.IntegerField(null=True, blank=True)
 
     class Meta:
         unique_together = (('student', 'semester'), )
+
+    def __str__(self):
+        return self.student.user.username + '_' + str(self.semester)
 
 class MessFee(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     month = models.PositiveSmallIntegerField()
     year = models.PositiveSmallIntegerField()
-    mess_fee = models.IntegerField(blank=True)
+    mess_fee = models.IntegerField()
+    mess_fee_paid = models.IntegerField(null=True, blank=True)
 
     class Meta:
         unique_together = (('student', 'month', 'year'), )
+    
+    def __str__(self):
+        return self.student.user.username + '_' + str(self.month) + '_' + str(self.year)
 
 class Result(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -86,56 +122,119 @@ class Result(models.Model):
 
     class Meta:
         unique_together = (('student', 'semester'), )
+    
+    def __str__(self):
+        return self.student.user.username + '_' + str(self.semester)
 
 class InstTeaches(models.Model):
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (('faculty', 'course'), )
+
+    def __str__(self):
+        return self.faculty.user.username + '_' + self.course.course_name
 
 class StudTakes(models.Model):
     class Meta:
         verbose_name_plural = "Students Takes"
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    quiz1_score = models.IntegerField(null=True)
-    quiz2_score = models.IntegerField(null=True)
-    midterm_score = models.IntegerField(null=True)
-    endterm_score = models.IntegerField(null=True)
-    assignment_score = models.IntegerField(null=True)
+    quiz1_score = models.IntegerField(null=True, blank=True)
+    quiz2_score = models.IntegerField(null=True, blank=True)
+    midterm_score = models.IntegerField(null=True, blank=True)
+    endterm_score = models.IntegerField(null=True, blank=True)
+    assignment_score = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        unique_together = (('student', 'course'), )
+
+    def __str__(self):
+        return self.student.user.username + '_' + self.course.course_name
 
 
 class InstOf(models.Model):
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
     section = models.ForeignKey(Section, on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = (('faculty', 'section'), )
+
+    def __str__(self):
+        return self.faculty.user.username + '_' + self.section.sec_name
+
 class StudPartOf(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     section = models.ForeignKey(Section, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (('student', 'section'), )
+
+    def __str__(self):
+        return self.student.user.username + '_' + self.section.sec_name
 
 class InstReq(models.Model):
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
     cert_req = models.ForeignKey(CertReq, on_delete=models.CASCADE)
     req_date = models.DateTimeField(default=datetime.datetime.now())
 
+    class Meta:
+        unique_together = (('faculty', 'cert_req'), )
+
+    def __str__(self):
+        return self.faculty.user.username + '_' + self.cert_req.id
+
 class StudReq(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     cert_req = models.ForeignKey(CertReq, on_delete=models.CASCADE)
     req_date = models.DateTimeField(default=datetime.datetime.now())
+
+    class Meta:
+        unique_together = (('student', 'cert_req'), )
+    
+    def __str__(self):
+        return self.student.user.username + '_' + self.cert_req.id
 
 class AdminReview(models.Model):
     admin = models.ForeignKey(User, on_delete=models.CASCADE)
     cert_req = models.ForeignKey(CertReq, on_delete=models.CASCADE)
     review_date = models.DateTimeField(default=datetime.datetime.now())
 
+    class Meta:
+        unique_together = (('admin', 'cert_req'), )
+
+    def __str__(self):
+        return self.admin.username + '_' + self.cert_req.id
+
 class AdminPublish(models.Model):
     admin = models.ForeignKey(User, on_delete=models.CASCADE)
     notice = models.ForeignKey(Notice, on_delete=models.CASCADE)
     published_on = models.DateTimeField(default=datetime.datetime.now())
+
+    class Meta:
+        unique_together = (('admin', 'notice'), )
+    
+    def __str__(self):
+        return self.admin.username + '_' + self.notice.notice_name
 
 class InstPublish(models.Model):
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
     notice = models.ForeignKey(Notice, on_delete=models.CASCADE)
     published_on = models.DateTimeField(default=datetime.datetime.now())
 
+    class Meta:
+        unique_together = (('faculty', 'notice'), )
+    
+    def __str__(self):
+        return self.faculty.user.username + '_' + self.notice.notice_name
+
 class SecCanRead(models.Model):
     section = models.ForeignKey(Section, on_delete=models.CASCADE)
     notice = models.ForeignKey(Notice, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.section.sec_name + '_' + self.notice.notice_name
+
+    class Meta:
+        unique_together = (('section', 'notice'), )
