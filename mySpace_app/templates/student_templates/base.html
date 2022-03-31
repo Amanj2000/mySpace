@@ -134,19 +134,18 @@
           <span class="dropdown-item dropdown-header">{{notifications.count}} Notifications</span>
           {% endif %}
           <div class="dropdown-divider"></div>
-          <a href="/student_all_notification" class="dropdown-item">
+          <a href="{% url 'student_notice_home' user.username %}" class="dropdown-item">
             <i class="fas fa-bell mr-2"></i>
             {% if notifications.count == None %}
             No notifications
             {% elif notifications.count == 1 %}
-            {{notifications.count}} notificatiion has been received.
+            {{notifications.count}} notification has been received.
             {% else %}
-            {{notifications.count}} notificatiions have been received.
+            {{notifications.count}} notifications have been received.
             {% endif %}
-            <!-- <span class="float-right text-muted text-sm">{{a.created_at | naturaltime}}</span> -->
           </a>
           <div class="dropdown-divider"></div>
-          <a href="/all_notification" class="dropdown-item dropdown-footer">View all notifications</a>
+          <a href="{% url 'student_notice_home' user.username %}" class="dropdown-item dropdown-footer">View all notifications</a>
         </div>
       </li>
       <!-- Notifications end -->

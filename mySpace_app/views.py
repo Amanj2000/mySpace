@@ -159,18 +159,18 @@ def student_perf_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
     user = Student.objects.get(user=request.user)
-    takes = StudTakes.objects.filter(student=user.id)
+    takes = StudTakes.objects.filter(student=user)
 
-    course_name = []
+    courses = []
     for entry in takes:
-        course_name.append(Course.objects.get(id=entry.course).name)
-    return render(request, 'student_templates/student_perf_home.html', course_name)
+        courses.append(Course.objects.get(id=entry.course.id))
+    return render(request, 'student_templates/student_perf_home.html', {'courses': courses})
 
 def student_perf(request, username, course_id):
     if request.user.is_anonymous: return redirect('/login')
 
     user = Student.objects.get(user=request.user)
-    course = StudTakes.objects.get(student=user.id, course=course_id)
+    course = StudTakes.objects.get(student=user, course=course_id)
     contents = {
         'quiz1': course.quiz1_score,
         'quiz2': course.quiz2_score,
@@ -184,13 +184,13 @@ def student_notice_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
     user = Student.objects.get(user=request.user)
-    partOf = StudPartOf.objects.get(student=user.id)
+    partOf = StudPartOf.objects.get(student=user)
     canRead = SecCanRead.objects.filter(section=partOf.section)
 
     all_notice = []
     for entry in canRead:
-        all_notice.append(Notice.objects.get(id=entry.notice))
-    return render(request, 'student_templates/student_notice_home.html', all_notice)
+        all_notice.append(Notice.objects.get(id=entry.notice.id))
+    return render(request, 'student_templates/student_notice_home.html', {"notifications": all_notice})
 
 def student_notice(request, username, notice_id):
     if request.user.is_anonymous: return redirect('/login')
@@ -208,7 +208,7 @@ def student_notice(request, username, notice_id):
 def student_fee_payment_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
-    return render(request, 'student_templates/student_fee_payment_home')
+    return render(request, 'student_templates/student_fee_payment_home.html')
 
 def student_fee_payment_mess(request, username):
     if request.user.is_anonymous: return redirect('/login')
