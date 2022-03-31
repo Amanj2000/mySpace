@@ -5,13 +5,11 @@
 
 
 {% block main_content %}
-    {% for key, value in content.items %}
-       <div>
-            {% if value %}
-                <p> {{key}}: {{value}} </p>
-            {% else %}
-                <p> {{key}}: - </p>
-            {% endif %}
-       </div>
-    {% endfor %}
+    <div class="text-center">
+        {% for key, value in content.items %}
+        <div>
+            <p> {{key}}: {{value}} </p>
+        </div>
+        {% endfor %}
+    </div>
 {% endblock main_content %}

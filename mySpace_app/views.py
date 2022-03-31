@@ -173,11 +173,11 @@ def student_perf(request, username, course_id):
     _course = Course.objects.get(id=course_id)
     course = StudTakes.objects.get(student=user, course=_course)
     contents = {
-        'quiz1': course.quiz1_score,
-        'quiz2': course.quiz2_score,
-        'midterm': course.midterm_score,
-        'endterm': course.endterm_score,
-        'assignment': course.assignment_score,
+        'Quiz1': course.quiz1_score if course.quiz1_score else '-',
+        'Quiz2': course.quiz2_score if course.quiz2_score else '-',
+        'Mid-term': course.midterm_score if course.midterm_score else '-',
+        'End-term': course.endterm_score if course.endterm_score else '-',
+        'Assignment': course.assignment_score if course.assignment_score else '-'
     }
     return render(request, 'student_templates/student_perf.html', {'content': contents})
 
@@ -207,7 +207,7 @@ def student_notice(request, username, notice_id):
 def student_fee_payment_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
-    return render(request, 'student_templates/student_fee_payment_home')
+    return render(request, 'student_templates/student_fee_payment_home.html')
 
 def student_fee_payment_mess(request, username):
     if request.user.is_anonymous: return redirect('/login')
@@ -215,7 +215,28 @@ def student_fee_payment_mess(request, username):
     user = Student.objects.get(user=request.user)
     mess_fee_entries = MessFee.objects.filter(student=user)
 
-    return render(request, 'student_templates/student_fee_payment_mess', mess_fee_entries)
+    all_entries = []
+    total_due = 0
+    total_paid = 0
+    for entry in mess_fee_entries:
+        temp = {
+            'month': entry.month,
+            'year': entry.year,
+            'due': entry.mess_fee,
+            'paid': entry.mess_fee_paid if entry.mess_fee_paid else '-'
+        }
+        total_due += entry.mess_fee
+        if entry.mess_fee_paid: total_paid += entry.mess_fee_paid
+        all_entries.append(temp)
+
+    content = {
+        'total_entries': len(all_entries),
+        'all_entries': all_entries,
+        'total_due': total_due,
+        'total_paid': total_paid,
+        'remaining': total_due - total_paid
+    }
+    return render(request, 'student_templates/student_fee_payment_mess.html', content)
 
 def student_fee_payment_tuition(request, username):
     if request.user.is_anonymous: return redirect('/login')
@@ -223,4 +244,33 @@ def student_fee_payment_tuition(request, username):
     user = Student.objects.get(user=request.user)
     sem_fee_entries = SemFee.objects.filter(student=user)
 
-    return render(request, 'student_templates/student_fee_payment_tuition', sem_fee_entries)
+    all_entries = []
+    tuition_due = 0
+    tuition_paid = 0
+    hostel_due = 0
+    hostel_paid = 0
+    for entry in sem_fee_entries:
+        temp = {
+            'semester': entry.semester,
+            'tuition_due': entry.tuition_fee,
+            'hostel_due': entry.hostel_fee,
+            'tuition_paid': entry.tuition_fee_paid if entry.tuition_fee_paid else '-',
+            'hostel_paid': entry.hostel_fee_paid if entry.hostel_fee_paid else '-'
+        }
+        tuition_due += entry.tuition_fee
+        hostel_due += entry.hostel_fee
+        if entry.tuition_fee_paid: tuition_paid += entry.tuition_fee_paid
+        if entry.hostel_fee_paid: hostel_paid += entry.hostel_fee_paid
+        all_entries.append(temp)
+
+    content = {
+        'total_entries': len(all_entries),
+        'all_entries': all_entries,
+        'tuition_due': tuition_due,
+        'tuition_paid': tuition_paid,
+        'tuition_remaining': tuition_due - tuition_paid,
+        'hostel_due': hostel_due,
+        'hostel_paid': hostel_paid,
+        'hostel_remaining': hostel_due - hostel_paid
+    }
+    return render(request, 'student_templates/student_fee_payment_tuition.html', content)

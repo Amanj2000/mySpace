@@ -1,0 +1,40 @@
+{% extends 'student_templates/base.html' %}
+{% block page_title %}
+<i class="nav-icon fas fa-tachometer-alt"></i> Home
+{% endblock page_title %}
+
+
+{% block main_content %}
+    <div class=>
+        {% if total_entries == 0 %}
+            <p> No Record Available </p>
+        {% else %}
+            <table>
+            <tr>
+                <th>Semester</th>
+                <th>Tuition_Due</th>
+                <th>Tuition_Paid</th>
+                <th>Hostel_Due</th>
+                <th>Hostel_Paid</th>
+            </tr>
+            {% for entry in all_entries %}
+            <tr>
+                <td>{{entry.semester}}</td>
+                <td>{{entry.tuition_due}}</td>
+                <td>{{entry.tuition_paid}}</td>
+                <td>{{entry.hostel_due}}</td>
+                <td>{{entry.hostel_paid}}</td>
+            </tr>  
+            {% endfor %}
+            </table>
+            <div>
+                <p>Total Tuition Due: {{tuition_due}}<br>
+                   Total Tuition Paid: {{tuition_paid}}<br>
+                   Due Remaining: {{tuition_remaining}}</p>
+                <p>Total Hostel Due: {{hostel_due}}<br>
+                   Total Hostel Paid: {{hostel_paid}}<br>
+                   Due Remaining: {{hostel_remaining}}</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock main_content %}

@@ -1,0 +1,20 @@
+{% extends 'student_templates/base.html' %}
+{% block page_title %}
+<i class="nav-icon fas fa-tachometer-alt"></i> Home
+{% endblock page_title %}
+
+
+{% block main_content %}
+    <div class="small-box bg-success shadow-custom" style="background-color: rgb(0, 181, 253) !important;">
+        <div class="inner">
+            <h3>Semester Fee</h3>
+        </div>
+        <a href="/student/{{user.username}}/fee-payment/tuition/" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+    <div class="small-box bg-success shadow-custom" style="background-color: rgb(0, 181, 253) !important;">
+        <div class="inner">
+            <h3>Mess Fee</h3>
+        </div>
+        <a href="/student/{{user.username}}/fee-payment/mess/" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+    </div>
+{% endblock main_content %}
