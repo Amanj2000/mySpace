@@ -121,29 +121,18 @@
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-bell"></i>
-          {% if notifications.count == 0 %}
+          {% if notices_count == 0 %}
           <span class="badge badge-warning navbar-badge"></span>
           {% else %}
-          <span class="badge badge-warning navbar-badge font-weight-bold">{{notifications.count}}</span>
+          <span class="badge badge-warning navbar-badge font-weight-bold">{{notices_count}}</span>
           {% endif %}
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          {% if notifications.count == 1 %}
-          <span class="dropdown-item dropdown-header">{{notifications.count}} Notification</span>
+          {% if notices_count == 1 %}
+          <span class="dropdown-item dropdown-header">{{notices_count}} Notification</span>
           {% else %}
-          <span class="dropdown-item dropdown-header">{{notifications.count}} Notifications</span>
+          <span class="dropdown-item dropdown-header">{{notices_count}} Notifications</span>
           {% endif %}
-          <div class="dropdown-divider"></div>
-          <a href="{% url 'student_notice_home' user.username %}" class="dropdown-item">
-            <i class="fas fa-bell mr-2"></i>
-            {% if notifications.count == None %}
-            No notifications
-            {% elif notifications.count == 1 %}
-            {{notifications.count}} notification has been received.
-            {% else %}
-            {{notifications.count}} notifications have been received.
-            {% endif %}
-          </a>
           <div class="dropdown-divider"></div>
           <a href="{% url 'student_notice_home' user.username %}" class="dropdown-item dropdown-footer">View all notifications</a>
         </div>
@@ -157,7 +146,7 @@
         </a>
         <div class="btn-group">
           <div class="dropdown-menu">
-            <a class="dropdown-item" href="/student/{{ user.username }}/profile/"><i class="fas fa-user"></i> Profile</a>
+            <a class="dropdown-item" href="{% url 'student_profile' user.username %}"><i class="fas fa-user"></i> Profile</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{% url 'logout' %}" style="color: #ce0000;"><i class="fas fa-sign-out-alt"></i> Logout</a>
           </div>
@@ -225,6 +214,8 @@
 <script src="{% static "plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js" %}"></script>
 <!-- AdminLTE App -->
 <script src="{% static "dist/js/adminlte.js" %}"></script>
+<!-- Font Awesome librarty-->
+
 
 {% block custom_js %}
 {% endblock custom_js %}

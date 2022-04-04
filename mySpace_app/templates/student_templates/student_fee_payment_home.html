@@ -5,16 +5,42 @@
 
 
 {% block main_content %}
-    <div class="small-box bg-success shadow-custom" style="background-color: rgb(0, 181, 253) !important;">
-        <div class="inner">
-            <h3>Semester Fee</h3>
+<div class="container-fluid" style="display: flex; flex-wrap: wrap;">
+    <div class="col-lg-3 col-6" style="min-width: 30%;">
+        <div class="small-box bg-success shadow-custom" style="background-color: rgb(0, 181, 253) !important;">
+            <div class="inner">
+                <h3>Semester Fees</h3>
+                <p>View fees related to all semesters</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-graduation-cap" style="font-size: 4em;"></i>
+            </div>
+            <a href="{% url 'student_fee_details_tuition' user.username %}" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
         </div>
-        <a href="/student/{{user.username}}/fee-payment/tuition/" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
     </div>
-    <div class="small-box bg-success shadow-custom" style="background-color: rgb(0, 181, 253) !important;">
-        <div class="inner">
-            <h3>Mess Fee</h3>
+    <div class="col-lg-3 col-6" style="min-width: 30%;">
+        <div class="small-box bg-warning shadow-custom">
+            <div class="inner">
+                <h3>Mess Fees</h3>
+                <p>View dues in monthly mess bill</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-hotdog" style="font-size: 4em;"></i>
+            </div>
+            <a href= "{% url 'student_fee_details_mess' user.username %}" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
         </div>
-        <a href="/student/{{user.username}}/fee-payment/mess/" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
     </div>
+    <div class="col-lg-3 col-6" style="min-width: 30%;">
+        <div class="small-box bg-warning shadow-custom" style="background-color: rgb(237, 64, 15) !important;">
+            <div class="inner">
+                <h3>Fines</h3>
+                <p>View any extra fines if exists</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-exclamation-triangle"style="font-size: 4em;"></i>
+            </div>
+            <a href= "{% url 'student_fee_details_mess' user.username %}" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+</div>
 {% endblock main_content %}

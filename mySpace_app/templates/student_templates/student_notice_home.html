@@ -29,11 +29,11 @@
                 </tr>
               </thead>
               <tbody>
-                {% for notification in notifications %}
+                {% for notice in notices %}
                 <tr>
-                  <td style="width: 50px;">{{ notification.id }}</td>
-                  <td>{{ notification.notice_name }}</td>
-                  <td>{{ notification.content }}</td>
+                  <td style="width: 50px;">{{ notice.id }}</td>
+                  <td>{{ notice.notice_name }}</td>
+                  <td>{{ notice.content }}</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -78,18 +78,4 @@
   });
 </script>
 {% endblock custom_js %}
-{% block page_title %}
-<i class="nav-icon fas fa-tachometer-alt"></i> Home
-{% endblock page_title %}
-
-
-{% block main_content %}
-    {% for notice in notices %}
-        <div class="small-box bg-success shadow-custom" style="background-color: rgb(0, 181, 253) !important;">
-            <div class="inner">
-                <h3>{{ notice.notice_name }}</h3>
-            </div>
-            <a href="/student/{{user.username}}/notice/{{ notice.id }}/" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
-        </div>
-    {% endfor %}
 {% endblock main_content %}

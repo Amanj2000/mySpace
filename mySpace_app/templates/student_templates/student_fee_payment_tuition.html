@@ -1,40 +1,86 @@
 {% extends 'student_templates/base.html' %}
+{% load static %}
+{% load humanize %}
 {% block page_title %}
-<i class="nav-icon fas fa-tachometer-alt"></i> Home
+<i class="ion ion-cash"></i> Fees
 {% endblock page_title %}
-
-
+{% block custom_css %}
+<link rel="stylesheet" href="{% static " plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static " plugins/datatables-responsive/css/responsive.bootstrap4.min.css" %}">
+<link rel="stylesheet" href="{% static " plugins/datatables-buttons/css/buttons.bootstrap4.min.css" %}">
+{% endblock custom_css %}
 {% block main_content %}
-    <div class=>
-        {% if total_entries == 0 %}
-            <p> No Record Available </p>
-        {% else %}
-            <table>
-            <tr>
-                <th>Semester</th>
-                <th>Tuition_Due</th>
-                <th>Tuition_Paid</th>
-                <th>Hostel_Due</th>
-                <th>Hostel_Paid</th>
-            </tr>
-            {% for entry in all_entries %}
-            <tr>
-                <td>{{entry.semester}}</td>
-                <td>{{entry.tuition_due}}</td>
-                <td>{{entry.tuition_paid}}</td>
-                <td>{{entry.hostel_due}}</td>
-                <td>{{entry.hostel_paid}}</td>
-            </tr>  
-            {% endfor %}
-            </table>
-            <div>
-                <p>Total Tuition Due: {{tuition_due}}<br>
-                   Total Tuition Paid: {{tuition_paid}}<br>
-                   Due Remaining: {{tuition_remaining}}</p>
-                <p>Total Hostel Due: {{hostel_due}}<br>
-                   Total Hostel Paid: {{hostel_paid}}<br>
-                   Due Remaining: {{hostel_remaining}}</p>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">All entries</h3>
+                    </div>
+
+                    <div class="card-body">
+                        {% if total_entries == 0 %}
+                        <p> No Record Available </p>
+                        {% else %}
+                        <table id="allFees" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Semester</th>
+                                    <th>Tuition_Due</th>
+                                    <th>Tuition_Paid</th>
+                                    <th>Hostel_Due</th>
+                                    <th>Hostel_Paid</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entry in all_entries %}
+                                <tr>
+                                    <td style="width: 50px;">{{ entry.semester }}</td>
+                                    <td>{{entry.tuition_due}}</td>
+                                    <td>{{entry.tuition_paid}}</td>
+                                    <td>{{entry.hostel_due}}</td>
+                                    <td>{{entry.hostel_paid}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-        {% endif %}
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Status</h3>
+                    </div>
+                <table id="total" class="table table-striped">
+                    <tr>
+                        <th></th>
+                        <th>Tuition</th>
+                        <th>Hostel</th>
+                    </tr>
+                    <tr>
+                        <th>Due</th>
+                        <td>{{tuition_due}}</td>
+                        <td>{{hostel_due}}</td>
+                    </tr>
+                    <tr>
+                        <th>Paid</th>
+                        <td>{{tuition_paid}}</td>
+                        <td>{{hostel_paid}}</td>
+                    </tr>
+                    <tr>
+                        <th>Remaining</th>
+                        <td style="color: red; font-weight: bold">{{tuition_remaining}}</td>
+                        <td style="color: red; font-weight: bold">{{hostel_remaining}}</td>
+                    </tr>
+                </table>
+                </div>
+            </div>
+        </div>
     </div>
+</section>
 {% endblock main_content %}

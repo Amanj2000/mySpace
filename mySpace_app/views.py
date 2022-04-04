@@ -145,9 +145,10 @@ def student_result(request, username, sem):
     filename = user.roll_no + '_' + str(sem) + '.pdf'
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     filepath = BASE_DIR + '/media/' + filename
+    print(filepath)
 
     if not os.path.exists(filepath):
-        return redirect(f'student/{username}/result')
+        return redirect(f'/student/{username}/result/')
 
     path = open(filepath, 'rb')
     mime_type, _ = mimetypes.guess_type(filepath)
@@ -164,7 +165,7 @@ def student_perf_home(request, username):
     all_course = []
     for entry in takes:
         all_course.append(entry.course)
-    return render(request, 'student_templates/student_perf_home.html', {'course': all_course})
+    return render(request, 'student_templates/student_perf_home.html', {'courses': all_course})
 
 def student_perf(request, username, course_id):
     if request.user.is_anonymous: return redirect('/login')
@@ -173,13 +174,13 @@ def student_perf(request, username, course_id):
     _course = Course.objects.get(id=course_id)
     course = StudTakes.objects.get(student=user, course=_course)
     contents = {
-        'Quiz1': course.quiz1_score if course.quiz1_score else '-',
-        'Quiz2': course.quiz2_score if course.quiz2_score else '-',
-        'Mid-term': course.midterm_score if course.midterm_score else '-',
-        'End-term': course.endterm_score if course.endterm_score else '-',
-        'Assignment': course.assignment_score if course.assignment_score else '-'
+        'quiz1': course.quiz1_score if course.quiz1_score else '-',
+        'quiz2': course.quiz2_score if course.quiz2_score else '-',
+        'midterm': course.midterm_score if course.midterm_score else '-',
+        'endterm': course.endterm_score if course.endterm_score else '-',
+        'assignment': course.assignment_score if course.assignment_score else '-'
     }
-    return render(request, 'student_templates/student_perf.html', {'content': contents})
+    return render(request, 'student_templates/student_perf.html', contents)
 
 def student_notice_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
@@ -197,7 +198,6 @@ def student_notice(request, username, notice_id):
     if request.user.is_anonymous: return redirect('/login')
 
     notice = Notice.objects.get(id=notice_id)
-    print(notice)
     contents = {
         'name': notice.notice_name,
         'content': notice.content
@@ -223,7 +223,7 @@ def student_fee_payment_mess(request, username):
             'month': entry.month,
             'year': entry.year,
             'due': entry.mess_fee,
-            'paid': entry.mess_fee_paid if entry.mess_fee_paid else '-'
+            'paid': entry.mess_fee_paid if entry.mess_fee_paid else 0
         }
         total_due += entry.mess_fee
         if entry.mess_fee_paid: total_paid += entry.mess_fee_paid
@@ -254,8 +254,8 @@ def student_fee_payment_tuition(request, username):
             'semester': entry.semester,
             'tuition_due': entry.tuition_fee,
             'hostel_due': entry.hostel_fee,
-            'tuition_paid': entry.tuition_fee_paid if entry.tuition_fee_paid else '-',
-            'hostel_paid': entry.hostel_fee_paid if entry.hostel_fee_paid else '-'
+            'tuition_paid': entry.tuition_fee_paid if entry.tuition_fee_paid else 0,
+            'hostel_paid': entry.hostel_fee_paid if entry.hostel_fee_paid else 0
         }
         tuition_due += entry.tuition_fee
         hostel_due += entry.hostel_fee
