@@ -1,11 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
+from mySpace_app.storage import OverwriteStorage
 import datetime
 
 # Create your models here.
 
 class Dept(models.Model):
-    dept_name = models.CharField(max_length=50)
+    dept_name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.dept_name
@@ -116,9 +117,12 @@ class MessFee(models.Model):
         return self.student.user.username + '_' + str(self.month) + '_' + str(self.year)
 
 class Result(models.Model):
+    def semwise_upload_to(self, filename):        
+        return f'media/result/{self.student.batch}-Batch/Sem-{self.semester}/{self.student.roll_no}.pdf'
+
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     semester = models.PositiveSmallIntegerField()
-    result = models.FileField(upload_to='media/')
+    result = models.FileField(max_length=30, upload_to=semwise_upload_to, storage=OverwriteStorage())
 
     class Meta:
         unique_together = (('student', 'semester'), )
@@ -177,7 +181,7 @@ class StudPartOf(models.Model):
 class InstReq(models.Model):
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
     cert_req = models.ForeignKey(CertReq, on_delete=models.CASCADE)
-    req_date = models.DateTimeField(default=datetime.datetime.now())
+    req_date = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = (('faculty', 'cert_req'), )
@@ -188,7 +192,7 @@ class InstReq(models.Model):
 class StudReq(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     cert_req = models.ForeignKey(CertReq, on_delete=models.CASCADE)
-    req_date = models.DateTimeField(default=datetime.datetime.now())
+    req_date = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = (('student', 'cert_req'), )
@@ -199,7 +203,7 @@ class StudReq(models.Model):
 class AdminReview(models.Model):
     admin = models.ForeignKey(User, on_delete=models.CASCADE)
     cert_req = models.ForeignKey(CertReq, on_delete=models.CASCADE)
-    review_date = models.DateTimeField(default=datetime.datetime.now())
+    review_date = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = (('admin', 'cert_req'), )
@@ -210,7 +214,7 @@ class AdminReview(models.Model):
 class AdminPublish(models.Model):
     admin = models.ForeignKey(User, on_delete=models.CASCADE)
     notice = models.ForeignKey(Notice, on_delete=models.CASCADE)
-    published_on = models.DateTimeField(default=datetime.datetime.now())
+    published_on = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = (('admin', 'notice'), )
@@ -221,7 +225,7 @@ class AdminPublish(models.Model):
 class InstPublish(models.Model):
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
     notice = models.ForeignKey(Notice, on_delete=models.CASCADE)
-    published_on = models.DateTimeField(default=datetime.datetime.now())
+    published_on = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = (('faculty', 'notice'), )
@@ -238,3 +242,15 @@ class SecCanRead(models.Model):
 
     class Meta:
         unique_together = (('section', 'notice'), )
+
+class TimeTable(models.Model):
+    def type_upload_to(self, filename):        
+        return f'media/timetable/{self.type}.pdf'
+
+    type_choices = [('Class', 'Class TimeTable'),
+                    ('Exam', 'Exam TimeTable')]
+    type = models.CharField(default = 'Class', max_length=5, choices= type_choices, unique=True)
+    schedule = models.FileField(max_length=30, upload_to=type_upload_to, storage=OverwriteStorage())
+
+    def __str__(self):
+        return self.type
