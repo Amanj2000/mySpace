@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from mySpace_app.storage import OverwriteStorage
 import datetime
 
@@ -27,6 +28,10 @@ class Student(models.Model):
     def __str__(self):
         return self.user.username
 
+    def clean(self):
+        if Faculty.objects.filter(user=self.user).exists():
+             raise ValidationError({'user': ['User is already registered as a faculty.']})
+
 class Faculty(models.Model):
     class Meta:
         verbose_name_plural = "Faculties"
@@ -44,6 +49,10 @@ class Faculty(models.Model):
 
     def __str__(self):
         return self.user.username
+    
+    def clean(self):
+        if Student.objects.filter(user=self.user).exists():
+            raise ValidationError({'user': ['User is already registered as a student.']})
 
 class Course(models.Model):
     course_name = models.CharField(max_length=40, unique=True)
