@@ -65,8 +65,9 @@ def faculty_course_home(request, username):
     courses = []
     for entry in teaches:
         courses.append(entry.course)
+    print(courses)
 
-    return render(request, 'faculty_template/faculty_course_home.html', {'courses': courses})
+    return render(request, 'faculty_templates/faculty_course_home.html', {'courses': courses})
 
 def faculty_course_perf(request, username, course_id):
     if request.user.is_anonymous: return redirect('/login')
@@ -78,20 +79,20 @@ def faculty_notice_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
     user = Faculty.objects.get(user=request.user)
-    published = InstPublish.objects.get(faculty=user)
+    published = InstPublish.objects.filter(faculty=user)
 
     noticeList = []
     for entry in published:
-        noticeList.append([entry.notice, entry.published_on])
+        noticeList.append({'note': entry.notice, 'published' :entry.published_on})
 
-    return render(request, 'faculty_templates/faculty_notice_home.html', {noticeList: noticeList})
+    return render(request, 'faculty_templates/faculty_notice_home.html', {'notices': noticeList})
 
 def faculty_notice_publish(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
     user = Faculty.objects.get(user=request.user)
     if request.method == 'POST':
-        notice = Notice(notice_name=request.POSt.get('notice_name'), content=request.POST.get('content'))
+        notice = Notice(notice_name=request.POST.get('notice_name'), content=request.POST.get('content'))
         notice.save()
         InstPublish(faculty=user, notice=notice).save()
         return redirect(f'/faculty/{username}/notice')
@@ -103,7 +104,7 @@ def faculty_notice_edit(request, username, notice_id):
 
     if request.method == 'POST':
         notice = Notice.objects.get(id=notice_id)
-        notice.notice_name = request.POSt.get('notice_name')
+        notice.notice_name = request.POST.get('notice_name')
         notice.content = request.POST.get('content')
         notice.save()
         return redirect(f'/faculty/{username}/notice')
@@ -145,7 +146,6 @@ def student_result(request, username, sem):
     filename = user.roll_no + '_' + str(sem) + '.pdf'
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     filepath = BASE_DIR + '/media/' + filename
-    print(filepath)
 
     if not os.path.exists(filepath):
         return redirect(f'/student/{username}/result/')
