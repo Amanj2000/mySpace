@@ -1,5 +1,3 @@
-import csv
-from http.client import HTTPResponse
 import mimetypes
 import os
 from django.http import HttpResponse
@@ -143,9 +141,9 @@ def student_result(request, username, sem):
     if request.user.is_anonymous: return redirect('/login')
 
     user = Student.objects.get(user=request.user)
-    filename = user.roll_no + '_' + str(sem) + '.pdf'
+    filename = user.roll_no + '.pdf'
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filepath = BASE_DIR + '/media/' + filename
+    filepath = BASE_DIR + f'\\media\\result\\{user.batch}-Batch\\Sem-{sem}\\' + filename
 
     if not os.path.exists(filepath):
         return redirect(f'/student/{username}/result/')
@@ -153,7 +151,7 @@ def student_result(request, username, sem):
     path = open(filepath, 'rb')
     mime_type, _ = mimetypes.guess_type(filepath)
     response = HttpResponse(path, content_type=mime_type)
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    response['Content-Disposition'] = "inline; filename=%s" % filename
     return response
 
 def student_perf_home(request, username):
@@ -274,3 +272,38 @@ def student_fee_payment_tuition(request, username):
         'hostel_remaining': hostel_due - hostel_paid
     }
     return render(request, 'student_templates/student_fee_payment_tuition.html', content)
+
+def student_timetable(request, username):
+    return render(request, 'student_templates/student_timetable.html')
+
+def student_timetable_exam(request, username):
+    if request.user.is_anonymous: return redirect('/login')
+
+    filename = 'Exam.pdf'
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    filepath = BASE_DIR + f'\\media\\timetable\\' + filename
+
+    if not os.path.exists(filepath):
+        return redirect(f'/student/{username}/timetable/')
+
+    path = open(filepath, 'rb')
+    mime_type, _ = mimetypes.guess_type(filepath)
+    response = HttpResponse(path, content_type=mime_type)
+    response['Content-Disposition'] = "inline; filename=%s" % filename
+    return response
+
+def student_timetable_class(request, username):
+    if request.user.is_anonymous: return redirect('/login')
+
+    filename = 'Class.pdf'
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    filepath = BASE_DIR + f'\\media\\timetable\\' + filename
+
+    if not os.path.exists(filepath):
+        return redirect(f'/student/{username}/timetable/')
+
+    path = open(filepath, 'rb')
+    mime_type, _ = mimetypes.guess_type(filepath)
+    response = HttpResponse(path, content_type=mime_type)
+    response['Content-Disposition'] = "inline; filename=%s" % filename
+    return response

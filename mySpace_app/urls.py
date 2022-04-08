@@ -25,6 +25,10 @@ urlpatterns = [
     path('student/<str:username>/fee-payment/mess/', views.student_fee_payment_mess, name="student_fee_details_mess"),
     path('student/<str:username>/fee-payment/tuition/', views.student_fee_payment_tuition, name="student_fee_details_tuition"),
 
+    path('student/<str:username>/timetable/', views.student_timetable, name="student_timetable"),
+    path('student/<str:username>/timetable/exam', views.student_timetable_exam, name="student_timetable_exam"),
+    path('student/<str:username>/timetable/class', views.student_timetable_class, name="student_timetable_class"),
+
     #Faculty URLs
     path('faculty/', views.faculty, name="faculty"),
     path('faculty/<str:username>/', views.faculty_home, name="faculty_home"),
