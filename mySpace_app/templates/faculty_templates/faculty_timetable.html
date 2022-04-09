@@ -1,4 +1,4 @@
-{% extends 'student_templates/base.html' %}
+{% extends 'faculty_templates/base.html' %}
 {% block page_title %}
 <i class="ion-ios-calendar"></i> Timetable
 {% endblock page_title %}
@@ -15,7 +15,7 @@
                 <div class="icon">
                     <i class="fas fa-users" style="font-size: 4em;"></i>
                 </div>
-                <a href="{% url 'student_timetable_class' user.username %}" target="_blank" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+                <a href="#" target="_blank" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
 
@@ -28,7 +28,7 @@
                 <div class="icon">
                     <i class="fas fa-pen" style="font-size: 4em;"></i>
                 </div>
-                <a href="{% url 'student_timetable_exam' user.username %}" target="_blank" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+                <a href="#" target="_blank" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <div class="col-lg-3 col-6" style="min-width: 30%;">

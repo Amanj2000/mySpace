@@ -11,7 +11,9 @@ urlpatterns = [
     path('student/', views.student, name="student"),
     path('student/<str:username>/', views.student_home, name="student_home"),
     path('student/<str:username>/profile/', views.student_profile, name="student_profile"),
-    
+
+    path('student/<str:username>/course/', views.student_course_home, name="student_course_home"),
+
     path('student/<str:username>/result/', views.student_result_home, name="student_result_home"),
     path('student/<str:username>/result/<int:sem>/', views.student_result, name="student_result"),
 
@@ -40,4 +42,6 @@ urlpatterns = [
     path('faculty/<str:username>/notice/', views.faculty_notice_home, name="faculty_notice_home"),
     path('faculty/<str:username>/notice/publish/', views.faculty_notice_publish, name="faculty_notice_publish"),
     path('faculty/<str:username>/notice/edit/<int:notice_id>/', views.faculty_notice_edit, name="faculty_notice_edit"),
+
+    path('faculty/<str:username>/timetable/', views.faculty_timetable, name="faculty_timetable"),
 ]

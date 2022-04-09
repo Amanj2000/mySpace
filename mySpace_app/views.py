@@ -109,6 +109,9 @@ def faculty_notice_edit(request, username, notice_id):
     else:
         return render(request, 'faculty_templates/faculty_notice_publish.html')
 
+def faculty_timetable(request, username):
+    return render(request, 'faculty_templates/faculty_timetable.html')
+
 
 
 #Student views
@@ -153,6 +156,18 @@ def student_result(request, username, sem):
     response = HttpResponse(path, content_type=mime_type)
     response['Content-Disposition'] = "inline; filename=%s" % filename
     return response
+
+def student_course_home(request, username):
+    if request.user.is_anonymous: return redirect('/login')
+
+    user = Student.objects.get(user=request.user)
+    takes = StudTakes.objects.filter(student=user)
+
+    all_course = []
+    for entry in takes:
+        all_course.append(entry.course)
+    return render(request, 'student_templates/student_course_home.html', {'courses': all_course})
+
 
 def student_perf_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
