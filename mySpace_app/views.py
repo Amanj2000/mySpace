@@ -319,10 +319,10 @@ def student_fee_payment_fine(request, username):
     print(content)
     return render(request, 'student_templates/student_fee_payment_fine.html', content)
 
-def student_timetable(request, username):
-    return render(request, 'student_templates/student_timetable.html')
+def timetable(request, username):
+    return render(request, 'timetable.html')
 
-def student_timetable_exam(request, username):
+def timetable_exam(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
     filename = 'Exam.pdf'
@@ -330,7 +330,11 @@ def student_timetable_exam(request, username):
     filepath = BASE_DIR + f'\\media\\timetable\\' + filename
 
     if not os.path.exists(filepath):
-        return redirect(f'/student/{username}/timetable/')
+        if Student.objects.filter(user=request.user).exists():
+            return redirect(f'/student/{username}/timetable/')
+        else:
+            return redirect(f'/faculty/{username}/timetable/')
+
 
     path = open(filepath, 'rb')
     mime_type, _ = mimetypes.guess_type(filepath)
@@ -338,7 +342,7 @@ def student_timetable_exam(request, username):
     response['Content-Disposition'] = "inline; filename=%s" % filename
     return response
 
-def student_timetable_class(request, username):
+def timetable_class(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
     filename = 'Class.pdf'
@@ -346,7 +350,10 @@ def student_timetable_class(request, username):
     filepath = BASE_DIR + f'\\media\\timetable\\' + filename
 
     if not os.path.exists(filepath):
-        return redirect(f'/student/{username}/timetable/')
+        if Student.objects.filter(user=request.user).exists():
+            return redirect(f'/student/{username}/timetable/')
+        else:
+            return redirect(f'/faculty/{username}/timetable/')
 
     path = open(filepath, 'rb')
     mime_type, _ = mimetypes.guess_type(filepath)
