@@ -61,7 +61,7 @@
             <div class="icon">
                 <i class="ion-chatbubble" style="font-size: 4em;"></i>
             </div>
-            <a href="#" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{% url 'student_certificate_request' user.username%}" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     <div class="col-lg-3 col-6" style="min-width: 30%;">
@@ -73,7 +73,7 @@
             <div class="icon">
                 <i class="ion-ios-calendar"  style="font-size: 4em;"></i>
             </div>
-            <a href="{% url 'timetable' user.username%}" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{% url 'student_timetable' user.username%}" class="small-box-footer"><i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 </div>
