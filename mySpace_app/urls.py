@@ -26,6 +26,7 @@ urlpatterns = [
     path('student/<str:username>/fee-payment/', views.student_fee_payment_home, name="student_fee_details_home"),
     path('student/<str:username>/fee-payment/mess/', views.student_fee_payment_mess, name="student_fee_details_mess"),
     path('student/<str:username>/fee-payment/tuition/', views.student_fee_payment_tuition, name="student_fee_details_tuition"),
+    path('student/<str:username>/fee-payment/fine/', views.student_fee_payment_fine, name="student_fee_details_fine"),
 
     path('student/<str:username>/timetable/', views.student_timetable, name="student_timetable"),
     path('student/<str:username>/timetable/exam', views.student_timetable_exam, name="student_timetable_exam"),

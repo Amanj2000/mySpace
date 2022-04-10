@@ -2,7 +2,7 @@
 {% load static %}
 {% load humanize %}
 {% block page_title %}
-<i class="nav-icon fas fa-book"></i> Publish New
+<i class="nav-icon fas fa-book"></i> Edit Notice
 {% endblock page_title %}
 {% block custom_css %}
 <link rel="stylesheet" href="{% static " plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" %}">
@@ -58,14 +58,14 @@
                         <h3 class="card-title">Notice</h3>
                     </div>
 
-                    <form action="{% url 'faculty_notice_publish' user.username %}" method="post">
+                    <form action="{% url 'faculty_notice_edit' user.username notice.id %}" method="post">
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-25">
                                 <label for="notice_name">Name:</label>
                             </div>
                             <div class="col-75">
-                                <input type="text" id="notice_name" name="notice_name" placeholder="Title..">
+                                <input type="text" id="notice_name" name="notice_name" value={{ notice.notice_name }}>
                             </div>
                         </div>
 
@@ -74,8 +74,7 @@
                                 <label for="content">Content:</label>
                             </div>
                             <div class="col-75">
-                                <textarea id="content" name="content" placeholder="Write something.."
-                                    style="height:200px"></textarea>
+                                <textarea id="content" name="content" style="height:200px">{{ notice.content }}</textarea>
                             </div>
                         </div>
                         <div class="row">

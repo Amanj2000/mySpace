@@ -125,6 +125,18 @@ class MessFee(models.Model):
     def __str__(self):
         return self.student.user.username + '_' + str(self.month) + '_' + str(self.year)
 
+class Fines(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    fine = models.IntegerField(null=True, blank=True)
+    fine_paid = models.IntegerField(null=True, blank=True)
+    remark = models.TextField()
+    
+    def __str__(self):
+        return self.student.user.username + '_' + self.remark
+    
+    class Meta:
+        verbose_name_plural = "Fines"
+
 class Result(models.Model):
     def semwise_upload_to(self, filename):        
         return f'media/result/{self.student.batch}-Batch/Sem-{self.semester}/{self.student.roll_no}.pdf'
