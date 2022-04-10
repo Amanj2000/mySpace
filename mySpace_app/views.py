@@ -209,7 +209,7 @@ def student_notice_home(request, username):
         all_notice.append(entry.notice)
     return render(request, 'student_templates/student_notice_home.html', {'notices': all_notice})
 
-def student_notice(request, username, notice_id):
+def notice_view(request, username, notice_id):
     if request.user.is_anonymous: return redirect('/login')
 
     notice = Notice.objects.get(id=notice_id)
@@ -217,7 +217,7 @@ def student_notice(request, username, notice_id):
         'name': notice.notice_name,
         'content': notice.content
     }
-    return render(request, 'student_templates/student_notice.html', contents)
+    return render(request, 'notice_view.html', contents)
 
 def student_fee_payment_home(request, username):
     if request.user.is_anonymous: return redirect('/login')

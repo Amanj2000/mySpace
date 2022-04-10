@@ -21,7 +21,7 @@ urlpatterns = [
     path('student/<str:username>/perf/<int:course_id>/', views.student_perf, name="student_performance"),
 
     path('student/<str:username>/notice/', views.student_notice_home, name="student_notice_home"),
-    path('student/<str:username>/notice/<int:notice_id>/', views.student_notice, name="student_notice_read"),
+    path('student/<str:username>/notice/<int:notice_id>/', views.notice_view, name="notice_view"),
 
     path('student/<str:username>/fee-payment/', views.student_fee_payment_home, name="student_fee_details_home"),
     path('student/<str:username>/fee-payment/mess/', views.student_fee_payment_mess, name="student_fee_details_mess"),
@@ -43,6 +43,7 @@ urlpatterns = [
     path('faculty/<str:username>/notice/', views.faculty_notice_home, name="faculty_notice_home"),
     path('faculty/<str:username>/notice/publish/', views.faculty_notice_publish, name="faculty_notice_publish"),
     path('faculty/<str:username>/notice/edit/<int:notice_id>/', views.faculty_notice_edit, name="faculty_notice_edit"),
+    path('faculty/<str:username>/notice/<int:notice_id>/', views.notice_view, name="notice_view"),
 
     path('faculty/<str:username>/timetable/', views.timetable, name="timetable"),
     path('faculty/<str:username>/timetable/exam', views.timetable_exam, name="timetable_exam"),
