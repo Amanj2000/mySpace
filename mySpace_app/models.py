@@ -163,6 +163,20 @@ class InstTeaches(models.Model):
     def __str__(self):
         return self.faculty.user.username + '_' + self.course.course_name
 
+class CourseDetails(models.Model):
+    def facultywise_upload_to(self, filename):        
+        return f'media/course_details/{self.inst_teaches.faculty.user.username}/{self.inst_teaches.course.course_name}/{filename}'
+
+    inst_teaches = models.ForeignKey(InstTeaches, on_delete=models.CASCADE)
+    details = models.FileField(max_length=30, upload_to=facultywise_upload_to, storage=OverwriteStorage())
+
+    class Meta:
+        verbose_name_plural = "Course Details"
+        unique_together = (('inst_teaches', 'details'), )
+    
+    def __str__(self):
+        return self.inst_teaches.faculty.user.username + '_' + self.inst_teaches.course.course_name + '_' + str(self.details)
+
 class StudTakes(models.Model):
     class Meta:
         verbose_name_plural = "Students Takes"

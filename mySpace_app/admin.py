@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import Student, Faculty, Dept, Course, Section, Tag, Notice, NoticeTag, CertReq, SemFee, MessFee, Result, InstTeaches, \
                     StudTakes, InstOf, StudPartOf, InstReq, StudReq, AdminReview, AdminPublish, InstPublish, SecCanRead, TimeTable, \
-                    Fines
+                    Fines, CourseDetails
 
 # Register your models here.
 admin.site.register(Student)
@@ -28,6 +28,7 @@ admin.site.register(InstPublish)
 admin.site.register(SecCanRead)
 admin.site.register(TimeTable)
 admin.site.register(Fines)
+admin.site.register(CourseDetails)
 
 # Change header
 admin.site.site_header = "mySpace administration"

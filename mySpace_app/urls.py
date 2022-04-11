@@ -42,7 +42,10 @@ urlpatterns = [
     path('faculty/<str:username>/profile/', views.faculty_profile, name="faculty_profile"),
 
     path('faculty/<str:username>/courses/', views.faculty_course_home, name="faculty_course_home"),
-    path('faculty/<str:username>/courses/<int:course_id>/', views.faculty_course_perf, name="faculty_course_perf"),
+    path('faculty/<str:username>/courses/<int:course_id>/', views.faculty_course, name="faculty_course"),
+
+    path('faculty/<str:username>/perf/', views.faculty_perf_home, name="faculty_perf_home"),
+    path('faculty/<str:username>/perf/<int:course_id>/', views.faculty_perf, name="faculty_perf"),
 
     path('faculty/<str:username>/notice/', views.faculty_notice_home, name="faculty_notice_home"),
     path('faculty/<str:username>/notice/publish/', views.faculty_notice_publish, name="faculty_notice_publish"),

@@ -4,7 +4,8 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from .models import Fines, InstPublish, InstReq, InstTeaches, SecCanRead, StudPartOf, StudReq, User, Student, Faculty, Dept, Course, Section, Notice, CertReq, SemFee, MessFee, Result, StudTakes
+from numpy import append
+from .models import CourseDetails, Fines, InstOf, InstPublish, InstReq, InstTeaches, SecCanRead, StudPartOf, StudReq, User, Student, Faculty, Dept, Course, Section, Notice, CertReq, SemFee, MessFee, Result, StudTakes
 from mySpace_app.file import processCSV, processExcel
 
 # Create your views here.
@@ -65,11 +66,63 @@ def faculty_course_home(request, username):
 
     return render(request, 'faculty_templates/faculty_course_home.html', {'courses': courses})
 
-def faculty_course_perf(request, username, course_id):
+def faculty_course(request, username, course_id):
+    pass
+
+def faculty_perf_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
-    #to-do: a way for faculty to upload perf of student for each course
-    return HttpResponse('Page In Progress')
+    user = Faculty.objects.get(user=request.user)
+    teaches = InstTeaches.objects.filter(faculty=user)
+
+    courses = []
+    for entry in teaches:
+        courses.append(entry.course)
+
+    return render(request, 'faculty_templates/faculty_perf_home.html', {'courses': courses})
+
+def faculty_perf(request, username, course_id):
+    if request.user.is_anonymous: return redirect('/login')
+
+    if request.method == 'POST':
+        user = Faculty.objects.get(user=request.user)
+        course = Course.objects.get(course_id=course_id)
+        
+        #All stud that takes this course
+        stud_course = {}
+        for entry in StudTakes.objects.filter(course=course):
+            stud_course.add(entry.student.id)
+
+        #All student in taught by this faculty
+        inst_of = InstOf.objects.filter(faculty=user)
+        stud_sec = {}    
+        for sec in inst_of:
+            for entry in sec.section:
+                stud_sec.update([st.id for st in StudPartOf.objects.filter(section=entry)])
+        
+        #Student that study this course by this faculty
+        stud_allowed = stud_sec & stud_course
+        
+        #Process File
+        file = request.FILES['File']
+        marks_of = request.POST.get('marks_of')
+        data = processCSV(file) if file.name.endswith('.csv') else processExcel(file)
+
+        # File format
+        # Roll No. Marks
+        error_stud = {}
+        for row in data:
+            try:
+                stud = Student.objects.get(roll_no=int(row[0]))
+                if(stud.id not in stud_allowed):
+                    error_stud.add(row[0])
+                    continue
+                temp = StudTakes.object.get(student=stud, course=course)
+                setattr(temp, marks_of, int(row[2]))
+            except Exception as e:
+                error_stud.add(row[1])
+    else :
+        return render(request, 'faculty_templates/faculty_perf.html')
 
 def faculty_notice_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
