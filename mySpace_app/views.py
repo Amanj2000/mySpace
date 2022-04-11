@@ -4,7 +4,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from .models import InstPublish, InstTeaches, SecCanRead, StudPartOf, User, Student, Faculty, Dept, Course, Section, Notice, CertReq, SemFee, MessFee, Result, StudTakes
+from .models import Fines, InstPublish, InstReq, InstTeaches, SecCanRead, StudPartOf, StudReq, User, Student, Faculty, Dept, Course, Section, Notice, CertReq, SemFee, MessFee, Result, StudTakes
 from mySpace_app.file import processCSV, processExcel
 
 # Create your views here.
@@ -32,7 +32,6 @@ def loginUser(request):
 
 def logoutUser(request):
     logout(request)
-    print("logout")
     return redirect('/login')
 
 #Faculty views
@@ -63,7 +62,6 @@ def faculty_course_home(request, username):
     courses = []
     for entry in teaches:
         courses.append(entry.course)
-    print(courses)
 
     return render(request, 'faculty_templates/faculty_course_home.html', {'courses': courses})
 
@@ -92,21 +90,21 @@ def faculty_notice_publish(request: HttpRequest, username):
         notice = Notice(notice_name=request.POST.get('notice_name'), content=request.POST.get('content'))
         notice.save()
         InstPublish(faculty=user, notice=notice).save()
-        return redirect(f'/faculty/{username}/notice')
+        return redirect(f'/faculty/{username}/notice/{notice.id}/')
     else:
         return render(request, 'faculty_templates/faculty_notice_publish.html')
 
 def faculty_notice_edit(request, username, notice_id):
     if request.user.is_anonymous: return redirect('/login')
 
+    notice = Notice.objects.get(id=notice_id)
     if request.method == 'POST':
-        notice = Notice.objects.get(id=notice_id)
         notice.notice_name = request.POST.get('notice_name')
         notice.content = request.POST.get('content')
         notice.save()
-        return redirect(f'/faculty/{username}/notice')
+        return redirect(f'/faculty/{username}/notice/{notice_id}/')
     else:
-        return render(request, 'faculty_templates/faculty_notice_publish.html')
+        return render(request, 'faculty_templates/faculty_notice_edit.html', {'notice': notice})
 
 def faculty_timetable(request, username):
     return render(request, 'faculty_templates/faculty_timetable.html')
@@ -206,15 +204,19 @@ def student_notice_home(request, username):
         all_notice.append(entry.notice)
     return render(request, 'student_templates/student_notice_home.html', {'notices': all_notice})
 
-def student_notice(request, username, notice_id):
+def notice_view(request, username, notice_id):
     if request.user.is_anonymous: return redirect('/login')
 
     notice = Notice.objects.get(id=notice_id)
     contents = {
         'name': notice.notice_name,
-        'content': notice.content
+        'content': notice.content,
+        'published_on': notice.published_on
     }
-    return render(request, 'student_templates/student_notice.html', contents)
+    if Student.objects.filter(user=request.user).exists():
+        return render(request, 'student_templates/notice_view.html', contents)
+    else:
+        return render(request, 'faculty_templates/notice_view.html', contents)
 
 def student_fee_payment_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
@@ -234,10 +236,10 @@ def student_fee_payment_mess(request, username):
         temp = {
             'month': entry.month,
             'year': entry.year,
-            'due': entry.mess_fee,
+            'due': entry.mess_fee if entry.mess_fee else 0,
             'paid': entry.mess_fee_paid if entry.mess_fee_paid else 0
         }
-        total_due += entry.mess_fee
+        if entry.mess_fee: total_due += entry.mess_fee
         if entry.mess_fee_paid: total_paid += entry.mess_fee_paid
         all_entries.append(temp)
 
@@ -264,13 +266,13 @@ def student_fee_payment_tuition(request, username):
     for entry in sem_fee_entries:
         temp = {
             'semester': entry.semester,
-            'tuition_due': entry.tuition_fee,
-            'hostel_due': entry.hostel_fee,
+            'tuition_due': entry.tuition_fee if entry.tuition_fee else 0,
+            'hostel_due': entry.hostel_fee if entry.hostel_fee else 0,
             'tuition_paid': entry.tuition_fee_paid if entry.tuition_fee_paid else 0,
             'hostel_paid': entry.hostel_fee_paid if entry.hostel_fee_paid else 0
         }
-        tuition_due += entry.tuition_fee
-        hostel_due += entry.hostel_fee
+        if entry.tuition_fee: tuition_due += entry.tuition_fee
+        if entry.hostel_fee: hostel_due += entry.hostel_fee
         if entry.tuition_fee_paid: tuition_paid += entry.tuition_fee_paid
         if entry.hostel_fee_paid: hostel_paid += entry.hostel_fee_paid
         all_entries.append(temp)
@@ -287,10 +289,43 @@ def student_fee_payment_tuition(request, username):
     }
     return render(request, 'student_templates/student_fee_payment_tuition.html', content)
 
-def student_timetable(request, username):
-    return render(request, 'student_templates/student_timetable.html')
+def student_fee_payment_fine(request, username):
+    if request.user.is_anonymous: return redirect('/login')
 
-def student_timetable_exam(request, username):
+    user = Student.objects.get(user=request.user)
+    fine_entries = Fines.objects.filter(student=user)
+
+    all_entries = []
+    total_due = 0
+    total_paid = 0
+    for entry in fine_entries:
+        temp = {
+            'due': entry.fine if entry.fine else 0,
+            'paid': entry.fine_paid if entry.fine_paid else 0,
+            'remark': entry.remark
+        }
+        if entry.fine: total_due += entry.fine
+        if entry.fine_paid: total_paid += entry.fine_paid
+        all_entries.append(temp)
+
+    content = {
+        'total_entries': len(all_entries),
+        'all_entries': all_entries,
+        'total_due': total_due,
+        'total_paid': total_paid,
+        'remaining': total_due - total_paid
+    }
+    return render(request, 'student_templates/student_fee_payment_fine.html', content)
+
+def timetable(request, username):
+    if request.user.is_anonymous: return redirect('/login')
+
+    if Student.objects.filter(user=request.user).exists():
+        return render(request, 'student_templates/student_timetable.html')
+    else:
+        return render(request, 'faculty_templates/faculty_timetable.html')
+
+def timetable_exam(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
     filename = 'Exam.pdf'
@@ -298,7 +333,11 @@ def student_timetable_exam(request, username):
     filepath = BASE_DIR + f'\\media\\timetable\\' + filename
 
     if not os.path.exists(filepath):
-        return redirect(f'/student/{username}/timetable/')
+        if Student.objects.filter(user=request.user).exists():
+            return redirect(f'/student/{username}/timetable/')
+        else:
+            return redirect(f'/faculty/{username}/timetable/')
+
 
     path = open(filepath, 'rb')
     mime_type, _ = mimetypes.guess_type(filepath)
@@ -306,7 +345,7 @@ def student_timetable_exam(request, username):
     response['Content-Disposition'] = "inline; filename=%s" % filename
     return response
 
-def student_timetable_class(request, username):
+def timetable_class(request, username):
     if request.user.is_anonymous: return redirect('/login')
 
     filename = 'Class.pdf'
@@ -314,10 +353,66 @@ def student_timetable_class(request, username):
     filepath = BASE_DIR + f'\\media\\timetable\\' + filename
 
     if not os.path.exists(filepath):
-        return redirect(f'/student/{username}/timetable/')
+        if Student.objects.filter(user=request.user).exists():
+            return redirect(f'/student/{username}/timetable/')
+        else:
+            return redirect(f'/faculty/{username}/timetable/')
 
     path = open(filepath, 'rb')
     mime_type, _ = mimetypes.guess_type(filepath)
     response = HttpResponse(path, content_type=mime_type)
     response['Content-Disposition'] = "inline; filename=%s" % filename
     return response
+
+def cert_req_home(request, username):
+    if request.user.is_anonymous: return redirect('/login')
+
+    if Student.objects.filter(user=request.user).exists():
+        user = Student.objects.get(user=request.user)
+        Req = StudReq.objects.filter(student=user)
+        all_request = []
+        for entry in Req:
+            all_request.append(entry.cert_req)
+        return render(request, 'student_templates/cert_req_home.html', {'requests': all_request})
+    else:
+        user = Faculty.objects.get(user=request.user)
+        Req = InstReq.objects.filter(faculty=user)
+        all_request = []
+        for entry in Req:
+            all_request.append(entry.cert_req)
+        return render(request, 'faculty_templates/cert_req_home.html', {'requests': all_request})
+
+def cert_req_new(request, username):
+    if request.user.is_anonymous: return redirect('/login')
+
+    if request.method == 'POST':
+        cert_req = CertReq(type=request.POST.get('type'), add_info=request.POST.get('additional-info'))
+        cert_req.save()
+        if Student.objects.filter(user=request.user).exists():
+            user = Student.objects.get(user=request.user)
+            StudReq(student=user, cert_req=cert_req).save()
+            return redirect(f'/student/{username}/cert-req/{cert_req.id}/')
+        else:
+            user = Faculty.objects.get(user=request.user)
+            InstReq(faculty=user, cert_req=cert_req).save()
+            return redirect(f'/faculty/{username}/cert-req/{cert_req.id}/')
+    else:
+        if Student.objects.filter(user=request.user).exists():
+            return render(request, 'student_templates/cert_req_new.html')
+        else:
+            return render(request, 'faculty_templates/cert_req_new.html')
+
+def cert_req_view(request, username, cert_id):
+    if request.user.is_anonymous: return redirect('/login')
+
+    cert = CertReq.objects.get(id=cert_id)
+    contents = {
+        'type': cert.type,
+        'add_info': cert.add_info,
+        'date': cert.req_date,
+        'response': cert.response
+    }
+    if Student.objects.filter(user=request.user).exists():
+        return render(request, 'student_templates/cert_req_view.html', contents)
+    else:
+        return render(request, 'faculty_templates/cert_req_view.html', contents)

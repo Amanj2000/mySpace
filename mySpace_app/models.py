@@ -77,6 +77,7 @@ class Tag(models.Model):
 class Notice(models.Model):
     notice_name = models.CharField(max_length=255)
     content = models.TextField()
+    published_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.notice_name
@@ -94,9 +95,10 @@ class NoticeTag(models.Model):
 class CertReq(models.Model):
     type = models.CharField(max_length=20)
     add_info = models.TextField()
+    req_date = models.DateTimeField(auto_now=True)
 
     response_type = models.TextChoices('Response', 'Approved Denied Pending')
-    response = models.CharField(choices=response_type.choices, max_length=10)
+    response = models.CharField(choices=response_type.choices, max_length=10, default=response_type.Pending)
 
 class SemFee(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -124,6 +126,18 @@ class MessFee(models.Model):
     
     def __str__(self):
         return self.student.user.username + '_' + str(self.month) + '_' + str(self.year)
+
+class Fines(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    fine = models.IntegerField(null=True, blank=True)
+    fine_paid = models.IntegerField(null=True, blank=True)
+    remark = models.TextField()
+    
+    def __str__(self):
+        return self.student.user.username + '_' + self.remark
+    
+    class Meta:
+        verbose_name_plural = "Fines"
 
 class Result(models.Model):
     def semwise_upload_to(self, filename):        
@@ -190,7 +204,7 @@ class StudPartOf(models.Model):
 class InstReq(models.Model):
     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE)
     cert_req = models.ForeignKey(CertReq, on_delete=models.CASCADE)
-    req_date = models.DateTimeField(auto_now=True)
+    
 
     class Meta:
         unique_together = (('faculty', 'cert_req'), )
@@ -201,7 +215,6 @@ class InstReq(models.Model):
 class StudReq(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     cert_req = models.ForeignKey(CertReq, on_delete=models.CASCADE)
-    req_date = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = (('student', 'cert_req'), )

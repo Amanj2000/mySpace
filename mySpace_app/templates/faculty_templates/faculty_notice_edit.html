@@ -2,7 +2,7 @@
 {% load static %}
 {% load humanize %}
 {% block page_title %}
-<i class="nav-icon fas fa-book"></i> Publish New
+<i class="nav-icon fas fa-book"></i> Edit Notice
 {% endblock page_title %}
 {% block custom_css %}
 <link rel="stylesheet" href="{% static " plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" %}">
@@ -38,15 +38,13 @@
         margin-top: 6px;
     }
 
-    input[type=submit] {
+    input[type=button] {
         color: white;
         padding: 12px 20px;
         border: none;
         border-radius: 4px;
         cursor: pointer;
-        margin-left: auto;
-        margin-right: 20px;
-        margin-bottom: 10px;
+        float: right;
     }
 </style>
 {% endblock custom_css %}
@@ -60,14 +58,14 @@
                         <h3 class="card-title">Notice</h3>
                     </div>
 
-                    <form action="{% url 'faculty_notice_publish' user.username %}" method="post">
+                    <form action="{% url 'faculty_notice_edit' user.username notice.id %}" method="post">
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-25">
                                 <label for="notice_name">Name:</label>
                             </div>
                             <div class="col-75">
-                                <input type="text" id="notice_name" name="notice_name" placeholder="Title..">
+                                <input type="text" id="notice_name" name="notice_name" value={{ notice.notice_name }}>
                             </div>
                         </div>
 
@@ -76,8 +74,7 @@
                                 <label for="content">Content:</label>
                             </div>
                             <div class="col-75">
-                                <textarea id="content" name="content" placeholder="Write something.."
-                                    style="height:200px"></textarea>
+                                <textarea id="content" name="content" style="height:200px">{{ notice.content }}</textarea>
                             </div>
                         </div>
                         <div class="row">
@@ -87,32 +84,6 @@
 
                 </div>
             </div>
-
-            <form action="{% url 'faculty_notice_publish' user.username %}" method="post">
-                {% csrf_token %}
-                <div class="row">
-                    <div class="col-25">
-                        <label for="notice_name">Name:</label>
-                    </div>
-                    <div class="col-75">
-                        <input type="text" id="notice_name" name="notice_name" placeholder="Title..">
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-25">
-                        <label for="content">Content:</label>
-                    </div>
-                    <div class="col-75">
-                        <textarea id="content" name="content" placeholder="Write something.."
-                            style="height:200px"></textarea>
-                    </div>
-                </div>
-                <div class="row">
-                    <input class="btn btn-primary shadow-custom font-weight-bold" type="submit" value="Submit">
-                </div>
-            </form>
-
         </div>
     </div>
     </div>
