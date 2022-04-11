@@ -1,6 +1,6 @@
 import mimetypes
 import os
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -85,9 +85,8 @@ def faculty_notice_home(request, username):
 
     return render(request, 'faculty_templates/faculty_notice_home.html', {'notices': noticeList})
 
-def faculty_notice_publish(request, username):
+def faculty_notice_publish(request: HttpRequest, username):
     if request.user.is_anonymous: return redirect('/login')
-
     user = Faculty.objects.get(user=request.user)
     if request.method == 'POST':
         notice = Notice(notice_name=request.POST.get('notice_name'), content=request.POST.get('content'))
