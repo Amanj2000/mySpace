@@ -1,7 +1,0 @@
-#ignore virtualenv files
-pyvenv.cfg
-Scripts/
-Lib/
-db.sqlite3
-*.pyc
-media/
