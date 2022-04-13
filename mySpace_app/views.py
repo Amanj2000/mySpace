@@ -86,23 +86,23 @@ def faculty_perf(request, username, course_id):
 
     if request.method == 'POST':
         user = Faculty.objects.get(user=request.user)
-        course = Course.objects.get(course_id=course_id)
-        
+        course = Course.objects.get(id=course_id)
+
         #All stud that takes this course
-        stud_course = {}
+        stud_course = set()
         for entry in StudTakes.objects.filter(course=course):
             stud_course.add(entry.student.id)
 
         #All student in taught by this faculty
         inst_of = InstOf.objects.filter(faculty=user)
-        stud_sec = {}    
+        stud_sec = set()
         for sec in inst_of:
             for entry in sec.section:
                 stud_sec.update([st.id for st in StudPartOf.objects.filter(section=entry)])
-        
+
         #Student that study this course by this faculty
         stud_allowed = stud_sec & stud_course
-        
+
         #Process File
         file = request.FILES['File']
         marks_of = request.POST.get('marks_of')
@@ -110,7 +110,7 @@ def faculty_perf(request, username, course_id):
 
         # File format
         # Roll No. Marks
-        error_stud = {}
+        error_stud = set()
         for row in data:
             try:
                 stud = Student.objects.get(roll_no=int(row[0]))
@@ -122,7 +122,7 @@ def faculty_perf(request, username, course_id):
             except Exception as e:
                 error_stud.add(row[1])
     else :
-        return render(request, 'faculty_templates/faculty_perf.html')
+        return render(request, 'faculty_templates/faculty_perf.html', {'course_id': course_id})
 
 def faculty_notice_home(request, username):
     if request.user.is_anonymous: return redirect('/login')
