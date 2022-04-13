@@ -88,47 +88,47 @@ def faculty_perf_home(request, username):
 	return render(request, 'faculty_templates/faculty_perf_home.html', {'courses': courses})
 
 def faculty_perf(request, username, course_id):
-    if request.user.is_anonymous: return redirect('/login')
+	if request.user.is_anonymous: return redirect('/login')
 
-    if request.method == 'POST':
-        user = Faculty.objects.get(user=request.user)
-        course = Course.objects.get(id=course_id)
+	if request.method == 'POST':
+		user = Faculty.objects.get(user=request.user)
+		course = Course.objects.get(id=course_id)
 
-        #All stud that takes this course
-        stud_course = set()
-        for entry in StudTakes.objects.filter(course=course):
-            stud_course.add(entry.student.id)
+		#All stud that takes this course
+		stud_course = set()
+		for entry in StudTakes.objects.filter(course=course):
+			stud_course.add(entry.student.user.id)
 
-        #All student in taught by this faculty
-        inst_of = InstOf.objects.filter(faculty=user)
-        stud_sec = set()
-        for sec in inst_of:
-            for entry in sec.section:
-                stud_sec.update([st.id for st in StudPartOf.objects.filter(section=entry)])
+		#All student in taught by this faculty
+		inst_of = InstOf.objects.filter(faculty=user)
+		stud_sec = set()
+		for sec in inst_of:
+			stud_sec.update([st.student.user.id for st in StudPartOf.objects.filter(section=sec.section)])
 
-        #Student that study this course by this faculty
-        stud_allowed = stud_sec & stud_course
+		#Student that study this course by this faculty
+		stud_allowed = stud_sec & stud_course
 
-        #Process File
-        file = request.FILES['File']
-        marks_of = request.POST.get('marks_of')
-        data = processCSV(file) if file.name.endswith('.csv') else processExcel(file)
-
-        # File format
-        # Roll No. Marks
-        error_stud = set()
-        for row in data:
-            try:
-                stud = Student.objects.get(roll_no=int(row[0]))
-                if(stud.id not in stud_allowed):
-                    error_stud.add(row[0])
-                    continue
-                temp = StudTakes.object.get(student=stud, course=course)
-                setattr(temp, marks_of, int(row[2]))
-            except Exception as e:
-                error_stud.add(row[1])
-    else :
-        return render(request, 'faculty_templates/faculty_perf.html', {'course_id': course_id})
+		#Process File
+		file = request.FILES.get('File')
+		marks_of = request.POST.get('marks_of')
+		data = processCSV(file) if file.name.endswith('.csv') else processExcel(file)
+		# File format
+		# Roll No. Marks
+		error_stud = set()
+		for row in data:
+			try:
+				stud = Student.objects.get(roll_no=int(row[0]))
+				if(stud.user.id not in stud_allowed):
+					error_stud.add(row[0])
+					continue
+				temp = StudTakes.objects.get(student=stud, course=course)
+				setattr(temp, marks_of, int(row[1]))
+				temp.save()
+			except Exception as e:
+				error_stud.add(row[0])
+		return HttpResponse('Upload Successfull')
+	else :
+		return render(request, 'faculty_templates/faculty_perf.html', {'course_id': course_id})
 
 def faculty_notice_home(request, username):
 	if request.user.is_anonymous: return redirect('/login')
