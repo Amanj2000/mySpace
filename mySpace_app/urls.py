@@ -58,5 +58,8 @@ urlpatterns = [
 
     path('faculty/<str:username>/cert-req/', views.cert_req_home, name="faculty_certificate_request"),
     path('faculty/<str:username>/cert-req/new/', views.cert_req_new, name="faculty_create_request"),
-    path('faculty/<str:username>/cert-req/<int:cert_id>/', views.cert_req_view, name="faculty_view_request")
+    path('faculty/<str:username>/cert-req/<int:cert_id>/', views.cert_req_view, name="faculty_view_request"),
+
+    #Password Reset
+    path("password_reset/", views.password_reset, name="password_reset")
 ]

@@ -7,8 +7,6 @@ def processCSV(file):
     rows = []
     for line in lines:
         rows.append(line.split(','))
-    for entry in rows:
-        print(entry)
     return rows
 
 def processExcel(file):
