@@ -1,0 +1,27 @@
+{% extends 'student_templates/base.html' %}
+{% block page_title %}
+<i class="nav-icon fas fa-eye"></i>
+
+
+View Notice
+{% endblock page_title %}
+
+
+{% block main_content %}
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+              <div class="card card-primary">
+                <div class="card-header">
+                  <h3 class="card-title">{{name}}</h3>
+                </div>
+        <div class="card-body">
+            <p>{{content}}</p>
+        </div>
+        </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock main_content %}
