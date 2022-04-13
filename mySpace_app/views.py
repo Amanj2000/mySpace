@@ -12,7 +12,8 @@ from django.core.mail import send_mail, BadHeaderError
 from django.template.loader import render_to_string
 
 from .models import CourseDetails, Fines, InstOf, InstPublish, InstReq, InstTeaches, SecCanRead, StudPartOf, StudReq, User, Student, Faculty, Dept, Course, Section, Notice, CertReq, SemFee, MessFee, Result, StudTakes
-from mySpace_app.file import processCSV, processExcel
+from .file import processCSV, processExcel
+from .utility import factTeaches 
 
 # Create your views here.
 def home(request):
@@ -90,45 +91,37 @@ def faculty_perf_home(request, username):
 def faculty_perf(request, username, course_id):
 	if request.user.is_anonymous: return redirect('/login')
 
+	course, stud_allowed = factTeaches(request.user, course_id)
 	if request.method == 'POST':
-		user = Faculty.objects.get(user=request.user)
-		course = Course.objects.get(id=course_id)
-
-		#All stud that takes this course
-		stud_course = set()
-		for entry in StudTakes.objects.filter(course=course):
-			stud_course.add(entry.student.user.id)
-
-		#All student in taught by this faculty
-		inst_of = InstOf.objects.filter(faculty=user)
-		stud_sec = set()
-		for sec in inst_of:
-			stud_sec.update([st.student.user.id for st in StudPartOf.objects.filter(section=sec.section)])
-
-		#Student that study this course by this faculty
-		stud_allowed = stud_sec & stud_course
-
 		#Process File
 		file = request.FILES.get('File')
 		marks_of = request.POST.get('marks_of')
 		data = processCSV(file) if file.name.endswith('.csv') else processExcel(file)
+		
 		# File format
 		# Roll No. Marks
-		error_stud = set()
-		for row in data:
+		error_stud = []
+		for i in range(0, len(data)):
 			try:
-				stud = Student.objects.get(roll_no=int(row[0]))
+				stud = Student.objects.get(roll_no=int(data[i][0]))
 				if(stud.user.id not in stud_allowed):
-					error_stud.add(row[0])
+					# error_stud.append((i+1, data[i][0], data[i][1]))
 					continue
 				temp = StudTakes.objects.get(student=stud, course=course)
-				setattr(temp, marks_of, int(row[1]))
+				setattr(temp, marks_of, int(data[i][1]))
 				temp.save()
 			except Exception as e:
-				error_stud.add(row[0])
-		return HttpResponse('Upload Successfull')
-	else :
-		return render(request, 'faculty_templates/faculty_perf.html', {'course_id': course_id})
+				# error_stud.append((i+1, data[i][0], data[i][1]))
+				pass
+		# print(error_stud)
+		messages.success(request, 'File successfully uploaded')
+
+	marks = {}
+	attribute = ['quiz1_score', 'midterm_score', 'quiz2_score', 'endterm_score', 'assignment_score']
+	for stud_id in stud_allowed:
+		temp = StudTakes.objects.get(student=Student.objects.get(user=User.objects.get(id=stud_id)), course=course)
+		marks[temp.student.roll_no] = [getattr(temp, attr) for attr in attribute]
+	return render(request, 'faculty_templates/faculty_perf.html', {'course_id': course_id, 'marks': marks})
 
 def faculty_notice_home(request, username):
 	if request.user.is_anonymous: return redirect('/login')
@@ -500,7 +493,7 @@ def password_reset(request):
 					}
 					email = render_to_string(email_template_name, c)
 					try:
-						send_mail(subject, email, 'amanj13508@gmail.com' , [user.email], fail_silently=False)
+						send_mail(subject, email, 'mySpace.Web@outlook.com' , [user.email], fail_silently=False)
 					except BadHeaderError:
 						return HttpResponse('Invalid header found.')
 					return redirect ("/password_reset/done/")
