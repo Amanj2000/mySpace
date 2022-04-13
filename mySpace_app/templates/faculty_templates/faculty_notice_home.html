@@ -28,6 +28,7 @@
                   <th>Content</th>
                   <th>Published On</th>
                   <th>Edit</th>
+                  <th>View</th>
                 </tr>
               </thead>
               <tbody>
@@ -35,9 +36,10 @@
                 <tr>
                   <td style="width: 50px;">{{ notice.note.id }}</td>
                   <td>{{ notice.note.notice_name }}</td>
-                  <td>{{ notice.note.content }}</td>
+                  <td style="max-width: 500px;"><p style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ notice.note.content }}</p></td>
                   <td>{{ notice.published }}</td>
-                  <td><a class="btn btn-primary shadow-custom font-weight-bold" href="{% url 'faculty_notice_edit' user.username notice.note.id %}"><i class="nav-icon fas fa-pencil"></i>Edit</a></td>
+                  <td><a class="btn btn-primary shadow-custom font-weight-bold" href="{% url 'faculty_notice_edit' user.username notice.note.id %}"><i class="nav-icon fas fa-pen"></i></a></td>
+                  <td><a class="btn btn-primary shadow-custom font-weight-bold" href="{% url 'notice_view' user.username notice.note.id %}"><i class="nav-icon fas fa-eye"></i></a></td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -46,12 +48,12 @@
         </div>
       </div>
     </div>
+    <div class="row">
+        <a class="btn btn-primary font-weight-bold" href="{% url 'faculty_notice_publish' user.username %}" style="margin-left: auto;
+        margin-right: 20px;margin-bottom: 20px;"><i class="nav-icon fas fa-book"></i>  Publish New</a>
+    </div>
   </div>
 </section>
-
-  <ol class="breadcrumb float-sm-right">
-    <li class="breadcrumb-item"><a class="btn btn-primary shadow-custom font-weight-bold" href="{% url 'faculty_notice_publish' user.username %}"><i class="nav-icon fas fa-book"></i>  Publish New</a></li>
-  </ol>
 
 {% block custom_js %}
 <!-- DataTables  & Plugins -->

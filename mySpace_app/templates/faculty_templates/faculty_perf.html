@@ -1,8 +1,8 @@
-{% extends 'student_templates/base.html' %}
+{% extends 'faculty_templates/base.html' %}
 {% load static %}
 {% load humanize %}
 {% block page_title %}
-<i class="ion-chatbubble"></i> Certificate Request
+<i class="nav-icon fas fa-bell"></i> Notice
 {% endblock page_title %}
 {% block custom_css %}
 <link rel="stylesheet" href="{% static "plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" %}">
@@ -16,28 +16,32 @@
       <div class="col-12">
         <div class="card card-primary">
           <div class="card-header">
-            <h3 class="card-title">All Request</h3>
+            <h3 class="card-title">All notifications</h3>
           </div>
 
           <div class="card-body">
             <table id="example1" class="table table-striped">
               <thead>
                 <tr>
-                  <th>Request No.</th>
-                  <th>Type of Request</th>
-                  <th>Info regarding Request</th>
-                  <th>Response</th>
-                  <th>View</th>
+                  <th>Roll no.</th>
+                  <th>Name</th>
+                  <th>Quiz 1</th>
+                  <th>Midterm</th>
+                  <th>Quiz 2</th>
+                  <th>Endterm</th>
+                  <th>Assignment</th>
                 </tr>
               </thead>
               <tbody>
-                {% for req in requests %}
+                {% for stud in students %}
                 <tr>
-                  <td style="width: 50px;">{{ req.id }}</td>
-                  <td>{{ req.type }}</td>
-                  <td style="max-width: 500px;"><p style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ req.add_info }}</p></td>
-                  <td>{{ req.response }}</td>
-                  <td><a class="btn btn-primary shadow-custom font-weight-bold" href="{% url 'faculty_view_request' user.username req.id %}"><i class="nav-icon fas fa-eye"></i></a></td>
+                  <td style="width: 50px;">{{ stud.student.roll_no }}</td>
+                  <td>{{ stud.student.names }}</td>
+                  <td>{{ stud.quiz1_score }}</td>
+                  <td>{{ stud.midterm }}</td>
+                  <td>{{ stud.quiz2_score }}</td>
+                  <td>{{ stud.endterm }}</td>
+                  <td>{{ stud.assignment }}</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -47,9 +51,9 @@
       </div>
     </div>
     <div class="row">
-      <a class="btn btn-primary font-weight-bold" href="{% url 'faculty_create_request' user.username %}" style="margin-left: auto;
-      margin-right: 20px;margin-bottom: 20px;"><i class="nav-icon fas fa-plus"></i>  Create New</a>
-  </div>
+        <a class="btn btn-primary font-weight-bold" href="{% url 'faculty_notice_publish' user.username %}" style="margin-left: auto;
+        margin-right: 20px;margin-bottom: 20px;"><i class="nav-icon fas fa-book"></i>  Publish New</a>
+    </div>
   </div>
 </section>
 

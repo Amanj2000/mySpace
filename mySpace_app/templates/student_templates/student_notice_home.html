@@ -26,6 +26,7 @@
                   <th>Notice</th>
                   <th>Name</th>
                   <th>Content</th>
+                  <th>View</th>
                 </tr>
               </thead>
               <tbody>
@@ -33,7 +34,8 @@
                 <tr>
                   <td style="width: 50px;">{{ notice.id }}</td>
                   <td>{{ notice.notice_name }}</td>
-                  <td>{{ notice.content }}</td>
+                  <td style="max-width: 500px;"><p style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ notice.content }}</p></td>
+                  <td><a class="btn btn-primary shadow-custom font-weight-bold" href="{% url 'notice_view' user.username notice.id %}"><i class="nav-icon fas fa-eye"></i></a></td>
                 </tr>
                 {% endfor %}
               </tbody>
