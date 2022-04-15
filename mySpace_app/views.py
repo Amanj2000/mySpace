@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 
 from .models import CourseDetails, Fines, InstOf, InstPublish, InstReq, InstTeaches, SecCanRead, StudPartOf, StudReq, User, Student, Faculty, Dept, Course, Section, Notice, CertReq, SemFee, MessFee, Result, StudTakes
 from .file import processCSV, processExcel
-from .utility import factTeaches 
+from .utility import factTeaches
 
 # Create your views here.
 def home(request):
@@ -97,7 +97,7 @@ def faculty_perf(request, username, course_id):
 		file = request.FILES.get('File')
 		marks_of = request.POST.get('marks_of')
 		data = processCSV(file) if file.name.endswith('.csv') else processExcel(file)
-		
+
 		# File format
 		# Roll No. Marks
 		error_stud = []
