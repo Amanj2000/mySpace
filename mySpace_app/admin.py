@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Student, Faculty, Dept, Course, Section, Tag, Notice, NoticeTag, CertReq, SemFee, MessFee, Result, InstTeaches, \
-                    StudTakes, InstOf, StudPartOf, InstReq, StudReq, AdminReview, AdminPublish, InstPublish, SecCanRead, TimeTable, \
-                    Fines, CourseDetails
+from .models import Student, Faculty, Dept, Course, Section, Notice, CertReq, SemFee, MessFee, Result, InstTeaches, \
+                    StudTakes, InstOf, StudPartOf, InstReq, StudReq, AdminReview, AdminPublish, InstPublish, SecCanRead, \
+                    TimeTable, Fines, CourseDetails
 
 # Register your models here.
 admin.site.register(Student)
@@ -9,9 +9,7 @@ admin.site.register(Faculty)
 admin.site.register(Dept)
 admin.site.register(Course)
 admin.site.register(Section)
-admin.site.register(Tag)
 admin.site.register(Notice)
-admin.site.register(NoticeTag)
 admin.site.register(CertReq)
 admin.site.register(SemFee)
 admin.site.register(MessFee)
