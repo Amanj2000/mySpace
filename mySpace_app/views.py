@@ -11,7 +11,7 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail, BadHeaderError
 from django.template.loader import render_to_string
 
-from .models import CourseDetails, Fines, InstOf, InstPublish, InstReq, InstTeaches, SecCanRead, StudPartOf, StudReq, User, Student, Faculty, Dept, Course, Notice, CertReq, SemFee, MessFee, Result, StudTakes
+from .models import CourseDetails, Fines, InstPublish, InstReq, InstTeaches, SecCanRead, StudPartOf, StudReq, User, Student, Faculty, Course, Notice, CertReq, SemFee, MessFee, Result, StudTakes
 from .file import processCSV, processExcel
 from .utility import factTeaches, getFaculty
 
