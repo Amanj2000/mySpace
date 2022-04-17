@@ -11,7 +11,7 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail, BadHeaderError
 from django.template.loader import render_to_string
 
-from .models import CourseDetails, Fines, InstPublish, InstReq, InstTeaches, SecCanRead, StudPartOf, StudReq, User, Student, Faculty, Course, Notice, CertReq, SemFee, MessFee, Result, StudTakes
+from .models import CourseDetails, Fines, InstOf, InstPublish, InstReq, InstTeaches, Section, SecCanRead, StudPartOf, StudReq, User, Student, Faculty, Course, Notice, CertReq, SemFee, MessFee, Result, StudTakes
 from .file import processCSV, processExcel
 from .utility import factTeaches, getFaculty
 
@@ -180,21 +180,37 @@ def faculty_notice_publish(request: HttpRequest, username):
 		notice = Notice(notice_name=request.POST.get('notice_name'), content=request.POST.get('content'))
 		notice.save()
 		InstPublish(faculty=user, notice=notice).save()
+		sections = request.POST.getlist('sections')
+		for sec in sections:
+			SecCanRead(section=Section.objects.get(sec_name=sec), notice=notice).save()
 		return redirect(f'/faculty/{username}/notice/{notice.id}/')
 	else:
-		return render(request, 'faculty_templates/faculty_notice_publish.html')
+		sections = []
+		for entry in InstOf.objects.filter(faculty=user):
+			sections.append(entry.section.sec_name)
+		return render(request, 'faculty_templates/faculty_notice_publish.html', {'sections': sections})
 
 def faculty_notice_edit(request, username, notice_id):
 	if request.user.is_anonymous: return redirect('/login')
 
+	user = Faculty.objects.get(user=request.user)
 	notice = Notice.objects.get(id=notice_id)
 	if request.method == 'POST':
-		notice.notice_name = request.POST.get('notice_name')
-		notice.content = request.POST.get('content')
+		notice.delete()
+		notice = Notice(notice_name=request.POST.get('notice_name'), content=request.POST.get('content'))
 		notice.save()
-		return redirect(f'/faculty/{username}/notice/{notice_id}/')
+		InstPublish(faculty=user, notice=notice).save()
+		sections = request.POST.getlist('sections')
+		for sec in sections:
+			SecCanRead(section=Section.objects.get(sec_name=sec), notice=notice).save()
+		return redirect(f'/faculty/{username}/notice/{notice.id}/')
 	else:
-		return render(request, 'faculty_templates/faculty_notice_edit.html', {'notice': notice})
+		sections = {}
+		for entry in InstOf.objects.filter(faculty=user):
+			sections[entry.section.sec_name] = 0
+		for entry in SecCanRead.objects.filter(notice=notice):
+			sections[entry.section.sec_name] = 1
+		return render(request, 'faculty_templates/faculty_notice_edit.html', {'notice': notice, 'sections': sections})
 
 def faculty_timetable(request, username):
 	return render(request, 'faculty_templates/faculty_timetable.html')
