@@ -75,7 +75,7 @@
                 </div>
             </div>
 
-            <div class = "row">
+            {% comment %} <div class = "row">
               <div class="col-25">
                 <label for="attribute">No. of attributes:</label>
               </div>
@@ -84,12 +84,51 @@
                 <a href="#" id="filldetails" onclick="addFields()">Make attributes</a>
                 <div id="container"></div>
               </div>
-            </div>
+            </div> {% endcomment %}
 
             <div class="row">
                 <input class="btn btn-primary shadow-custom font-weight-bold" type="submit" value="Submit">
             </div>
         </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Marks</h3>
+          </div>
+
+          <div class="card-body">
+            <table id="example1" class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Roll No.</th>
+                  <th>Quiz 1</th>
+                  <th>Midterm</th>
+                  <th>Quiz 2</th>
+                  <th>Endterm</th>
+                  <th>Assignment</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for key, value in marks.items %}
+                <tr>
+                  <td style="width: 250px;">{{key}}</td>
+                  {% for v in value %}
+                  <td style="width: 150px;">{{ v }}</td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -111,24 +150,7 @@
 <script src="{% static "plugins/datatables-buttons/js/buttons.print.min.js" %}"></script>
 <script src="{% static "plugins/datatables-buttons/js/buttons.colVis.min.js" %}"></script>
 <script>
-  $(function () {
-    $("#example1").DataTable({
-      "responsive": true, "lengthChange": false, "autoWidth": false,
-      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
-      "order": [[ 0, "desc" ]]
-
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-    $('#example2').DataTable({
-      "paging": true,
-      "lengthChange": false,
-      "searching": false,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false,
-      "responsive": true,
-    });
-  });
-    function addFields(){
+    {% comment %} function addFields(){
         // Generate a dynamic number of inputs
         var number = document.getElementById("attribute").value;
         console.log("pressed", number)
@@ -154,7 +176,7 @@
             div.appendChild(input);
             container.appendChild(div);
         }
-    }
+    } {% endcomment %}
 </script>
 {% endblock custom_js %}
 {% endblock main_content %}

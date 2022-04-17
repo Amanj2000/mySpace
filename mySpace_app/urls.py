@@ -12,7 +12,9 @@ urlpatterns = [
     path('student/<str:username>/', views.student_home, name="student_home"),
     path('student/<str:username>/profile/', views.student_profile, name="student_profile"),
 
-    path('student/<str:username>/course/', views.student_course_home, name="student_course_home"),
+    path('student/<str:username>/courses/', views.student_course_home, name="student_course_home"),
+    path('student/<str:username>/courses/<int:course_id>/', views.student_course, name="student_course"),
+    path('student/<str:username>/courses/<int:course_id>/<str:filename>/', views.show_material, name="show_material"),
 
     path('student/<str:username>/result/', views.student_result_home, name="student_result_home"),
     path('student/<str:username>/result/<int:sem>/', views.student_result, name="student_result"),
@@ -43,6 +45,7 @@ urlpatterns = [
 
     path('faculty/<str:username>/courses/', views.faculty_course_home, name="faculty_course_home"),
     path('faculty/<str:username>/courses/<int:course_id>/', views.faculty_course, name="faculty_course"),
+    path('faculty/<str:username>/courses/<int:course_id>/<str:filename>/', views.show_material, name="show_material"),
 
     path('faculty/<str:username>/perf/', views.faculty_perf_home, name="faculty_perf_home"),
     path('faculty/<str:username>/perf/<int:course_id>/', views.faculty_perf, name="faculty_perf"),

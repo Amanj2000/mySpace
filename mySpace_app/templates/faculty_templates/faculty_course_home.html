@@ -26,6 +26,7 @@
                   <th>Name</th>
                   <th>Grade</th>
                   <th>Department</th>
+                  <th>View</th>
                 </tr>
               </thead>
               <tbody>
@@ -34,6 +35,7 @@
                   <td>{{ course.course_name }}</td>
                   <td>{{ course.grade }}</td>
                   <td>{{ course.dept }}</td>
+                  <td><a class="btn btn-primary shadow-custom font-weight-bold" href="{% url 'faculty_course' user.username course.id %}"><i class="nav-icon fas fa-eye"></i></a></td>
                 </tr>
                 {% endfor %}
               </tbody>

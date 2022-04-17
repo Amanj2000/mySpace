@@ -11,9 +11,9 @@ from django.utils.encoding import force_bytes
 from django.core.mail import send_mail, BadHeaderError
 from django.template.loader import render_to_string
 
-from .models import CourseDetails, Fines, InstOf, InstPublish, InstReq, InstTeaches, SecCanRead, StudPartOf, StudReq, User, Student, Faculty, Dept, Course, Section, Notice, CertReq, SemFee, MessFee, Result, StudTakes
+from .models import CourseDetails, Fines, InstOf, InstPublish, InstReq, InstTeaches, SecCanRead, StudPartOf, StudReq, User, Student, Faculty, Dept, Course, Notice, CertReq, SemFee, MessFee, Result, StudTakes
 from .file import processCSV, processExcel
-from .utility import factTeaches
+from .utility import factTeaches, getFaculty
 
 # Create your views here.
 def home(request):
@@ -74,7 +74,45 @@ def faculty_course_home(request, username):
 	return render(request, 'faculty_templates/faculty_course_home.html', {'courses': courses})
 
 def faculty_course(request, username, course_id):
-	pass
+	if request.user.is_anonymous: return redirect('/login')
+
+	_faculty = Faculty.objects.get(user=request.user)
+	_course = Course.objects.get(id=course_id)
+	_inst_teaches = InstTeaches.objects.get(faculty=_faculty, course=_course)
+	if request.method == 'POST':
+		course_mat = CourseDetails(inst_teaches= _inst_teaches, details=request.FILES.get('File'))
+		course_mat.save()
+	
+	material = CourseDetails.objects.filter(inst_teaches=_inst_teaches)
+	files = []
+	for entry in material:
+		files.append(os.path.basename(entry.details.name))
+	return render(request, 'faculty_templates/faculty_course.html', {'files': files, 'course_id': course_id})
+
+
+def show_material(request, username, course_id, filename):
+	if request.user.is_anonymous: return redirect('/login')
+
+	if Student.objects.filter(user=request.user).exists():
+		faculty_name = getFaculty(request.user, course_id).faculty.user.username
+	else:
+		faculty_name = username
+	
+	BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+	course_name = Course.objects.get(id=course_id).course_name
+	filepath = BASE_DIR + f'\\media\\course_details\\{faculty_name}\\{course_name}\\' + filename
+
+	if not os.path.exists(filepath):
+		if Student.objects.filter(user=request.user).exists():
+			return redirect(f'/student/{username}/courses/{course_id}/')
+		else:
+			return redirect(f'/faculty/{username}/courses/{course_id}/')
+
+	path = open(filepath, 'rb')
+	mime_type, _ = mimetypes.guess_type(filepath)
+	response = HttpResponse(path, content_type=mime_type)
+	response['Content-Disposition'] = "inline; filename=%s" % filename
+	return response
 
 def faculty_perf_home(request, username):
 	if request.user.is_anonymous: return redirect('/login')
@@ -120,7 +158,7 @@ def faculty_perf(request, username, course_id):
 	attribute = ['quiz1_score', 'midterm_score', 'quiz2_score', 'endterm_score', 'assignment_score']
 	for stud_id in stud_allowed:
 		temp = StudTakes.objects.get(student=Student.objects.get(user=User.objects.get(id=stud_id)), course=course)
-		marks[temp.student.roll_no] = [getattr(temp, attr) for attr in attribute]
+		marks[temp.student.roll_no] = [getattr(temp, attr) if getattr(temp, attr) else '-' for attr in attribute]
 	return render(request, 'faculty_templates/faculty_perf.html', {'course_id': course_id, 'marks': marks})
 
 def faculty_notice_home(request, username):
@@ -217,6 +255,15 @@ def student_course_home(request, username):
 		all_course.append(entry.course)
 	return render(request, 'student_templates/student_course_home.html', {'courses': all_course})
 
+def student_course(request, username, course_id):
+	if request.user.is_anonymous: return redirect('/login')
+
+	_inst_teaches = getFaculty(request.user, course_id)
+	material = CourseDetails.objects.filter(inst_teaches=_inst_teaches)
+	files = []
+	for entry in material:
+		files.append(os.path.basename(entry.details.name))
+	return render(request, 'student_templates/student_course.html', {'files': files, 'course_id': course_id})
 
 def student_perf_home(request, username):
 	if request.user.is_anonymous: return redirect('/login')

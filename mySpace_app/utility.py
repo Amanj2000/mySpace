@@ -1,4 +1,4 @@
-from .models import Faculty, Course, StudTakes, InstOf, StudPartOf
+from .models import User, Faculty, Course, InstTeaches, StudTakes, InstOf, StudPartOf, Student
 
 def factTeaches(user, course_id):
     user = Faculty.objects.get(user=user)
@@ -18,3 +18,17 @@ def factTeaches(user, course_id):
     #Student that study this course by this faculty
     stud_allowed = stud_sec & stud_course
     return course, stud_allowed
+
+def getFaculty(user, course_id):
+    user = Student.objects.get(user=user)
+    course = Course.objects.get(id=course_id)
+    stud_sec = StudPartOf.objects.get(student=user).section
+
+    inst = set()
+    for entry in InstOf.objects.filter(section=stud_sec):
+        inst.add(entry.faculty)
+    
+    for entry in InstTeaches.objects.filter(course=course):
+        if entry.faculty in inst:
+            return entry
+    return None
