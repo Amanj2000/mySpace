@@ -82,7 +82,7 @@ def faculty_course(request, username, course_id):
 	if request.method == 'POST':
 		course_mat = CourseDetails(inst_teaches= _inst_teaches, details=request.FILES.get('File'))
 		course_mat.save()
-	
+
 	material = CourseDetails.objects.filter(inst_teaches=_inst_teaches)
 	files = []
 	for entry in material:
@@ -97,7 +97,7 @@ def show_material(request, username, course_id, filename):
 		faculty_name = getFaculty(request.user, course_id).faculty.user.username
 	else:
 		faculty_name = username
-	
+
 	BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 	course_name = Course.objects.get(id=course_id).course_name
 	filepath = BASE_DIR + f'\\media\\course_details\\{faculty_name}\\{course_name}\\' + filename
@@ -188,6 +188,7 @@ def faculty_notice_publish(request: HttpRequest, username):
 		sections = []
 		for entry in InstOf.objects.filter(faculty=user):
 			sections.append(entry.section.sec_name)
+			print(entry.section.sec_name)
 		return render(request, 'faculty_templates/faculty_notice_publish.html', {'sections': sections})
 
 def faculty_notice_edit(request, username, notice_id):

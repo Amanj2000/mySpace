@@ -80,6 +80,19 @@
                                     style="height:200px" required></textarea>
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="col-25">
+                                <label for="sections">Sections:</label>
+                            </div>
+                            <div class="col-75">
+                              {% for section in sections %}
+                                <input type="checkbox" id="section+{{section}}" name="sections" value="{{section}}">
+                                <label for="section+{{section}}" style="opacity: 70%">{{section}}</label>
+                              {% endfor %}
+                            </div>
+                          </div>
+
                         <div class="row">
                             <input class="btn btn-primary shadow-custom font-weight-bold" type="submit" value="Submit">
                         </div>

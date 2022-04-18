@@ -79,6 +79,24 @@
                                 <textarea id="content" name="content" style="height:200px">{{ notice.content }}</textarea>
                             </div>
                         </div>
+
+
+                          <div class="row">
+                            <div class="col-25">
+                                <label for="sections">Sections:</label>
+                            </div>
+                            <div class="col-75">
+                              {% for section, canRead in sections.items %}
+                                {% if canRead %}
+                                    <input type="checkbox" id="section+{{section}}" name="sections" value="{{section}}" checked>
+                                {% else %}
+                                    <input type="checkbox" id="section+{{section}}" name="sections" value="{{section}}">
+                                {% endif %}
+                                <label for="section+{{section}}" style="opacity: 70%">{{section}}</label>
+                              {% endfor %}
+                            </div>
+                          </div>
+
                         <div class="row">
                             <input class="btn btn-primary shadow-custom font-weight-bold" type="submit" value="Submit">
                         </div>
