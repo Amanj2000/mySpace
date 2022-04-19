@@ -10,7 +10,7 @@
 
 As our Institute grows day-by-day, so does the complexity of storing information related to the Institute and its members. We all face many issues such as: fees and dues of students, marks of students, timetables, examination schedules etc. mySpace will give maximum services in a single software product that can be used by Students, Faculty members and the System Administration.
 
-# View Live Demo (Deployed Project)
+## View Live Demo (Deployed Project)
 
 https://my-space-webapp.herokuapp.com/
 
