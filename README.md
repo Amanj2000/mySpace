@@ -4,7 +4,7 @@
 >
 >**Group: CS31 (G1)**
 
-**Introduction**
+## Introduction
 
 **mySpace** is a system that manages the records of students and faculty members regarding results, examination, personal information etc. Through mySpace, extensive information will be available at your fingertips and at any time. Viewing student data, allocating classes and reshuffling, managing semester information, examination dates, subject management, result declaration and related issues are made simple and easy. mySpace will allow keeping data in a form that can be easily accessed and analysed in a consistent way.
 
@@ -20,3 +20,12 @@ https://my-space-webapp.herokuapp.com/
 | **Student:** | Harsh | stud@123 |
 
 For more details, refer to: https://github.com/Amanj2000/mySpace/blob/main/Documentation/SRS.pdf
+
+## Team Members
+
+| **Roll Number** | **Name** |
+| ------ | ------ |
+| 1901006 | Abhinav Sharma |
+| 1901015 | Akshit Rao |
+| 1901016 | Almas Ahmad |
+| 1901018 | Aman Jain |
