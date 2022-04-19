@@ -71,21 +71,9 @@
                     <label for="File">File:</label>
                 </div>
                 <div class="col-75">
-                  <input type="sections" id="sections" name="sections">
+                  <input type="file" id="File" name="File">
                 </div>
-            </div>
-
-            {% comment %} <div class = "row">
-              <div class="col-25">
-                <label for="attribute">No. of attributes:</label>
               </div>
-              <div class="col-75">
-                <input type="text" id="attribute" name="attribute" value="">
-                <a href="#" id="filldetails" onclick="addFields()">Make attributes</a>
-                <div id="container"></div>
-              </div>
-            </div> {% endcomment %}
-
             <div class="row">
                 <input class="btn btn-primary shadow-custom font-weight-bold" type="submit" value="Submit">
             </div>
@@ -150,33 +138,6 @@
 <script src="{% static "plugins/datatables-buttons/js/buttons.print.min.js" %}"></script>
 <script src="{% static "plugins/datatables-buttons/js/buttons.colVis.min.js" %}"></script>
 <script>
-    {% comment %} function addFields(){
-        // Generate a dynamic number of inputs
-        var number = document.getElementById("attribute").value;
-        console.log("pressed", number)
-        // Get the element where the inputs will be added to
-        var container = document.getElementById("container");
-        // Remove every children it had before
-        while (container.hasChildNodes()) {
-            container.removeChild(container.lastChild);
-        }
-        for (i=0;i<number;i++){
-            var div = document.createElement("div");
-            div.classList.add('row');
-            var input = document.createElement("input");
-            var label = document.createElement("label");
-            input.classList.add("col-75");
-            label.classList.add("col-25");
-            input.type = "text";
-            input.name = "attribute" + i;
-            input.id  = "attribute" + i;
-            label.innerText = "Attribute " + i;
-            label.setAttribute('for', "attribute" + i);
-            div.appendChild(label);
-            div.appendChild(input);
-            container.appendChild(div);
-        }
-    } {% endcomment %}
 </script>
 {% endblock custom_js %}
 {% endblock main_content %}
