@@ -1,8 +1,8 @@
 # mySpace
 
->**CS331 - Software Engineering Lab - Final Project - Winter Sem'2022**
+> **CS331 - Software Engineering Lab - Final Project - Winter Sem'2022**
 >
->**Group: CS31 (G1)**
+> **Group: CS31 (G1)**
 
 ## Introduction
 
@@ -15,17 +15,18 @@ As our Institute grows day-by-day, so does the complexity of storing information
 https://my-space-webapp.herokuapp.com/
 
 | **User Type** | **Username** | **Password** |
-| ------ | ------ | ------ |
-| **Faculty:** | Faculty | fact@123 |
-| **Student:** | Harsh | stud@123 |
+| ------------- | ------------ | ------------ |
+| **Admin:**    | admin        | password     |
+| **Faculty:**  | Faculty      | fact@123     |
+| **Student:**  | Harsh        | stud@123     |
 
 For more details, refer to: https://github.com/Amanj2000/mySpace/blob/main/Documentation/SRS.pdf
 
 ## Team Members
 
-| **Roll Number** | **Name** |
-| ------ | ------ |
-| 1901006 | Abhinav Sharma |
-| 1901015 | Akshit Rao |
-| 1901016 | Almas Ahmad |
-| 1901018 | Aman Jain |
+| **Roll Number** | **Name**       |
+| --------------- | -------------- |
+| 1901006         | Abhinav Sharma |
+| 1901015         | Akshit Rao     |
+| 1901016         | Almas Ahmad    |
+| 1901018         | Aman Jain      |
