@@ -100,7 +100,7 @@ def show_material(request, username, course_id, filename):
 
 	BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 	course_name = Course.objects.get(id=course_id).course_name
-	filepath = BASE_DIR + f'\\media\\course_details\\{faculty_name}\\{course_name}\\' + filename
+	filepath = BASE_DIR + f'/media/course_details/{faculty_name}/{course_name}/' + filename
 
 	if not os.path.exists(filepath):
 		if Student.objects.filter(user=request.user).exists():
@@ -152,7 +152,6 @@ def faculty_perf(request, username, course_id):
 				# error_stud.append((i+1, data[i][0], data[i][1]))
 				pass
 		# print(error_stud)
-		messages.success(request, 'File successfully uploaded')
 
 	marks = {}
 	attribute = ['quiz1_score', 'midterm_score', 'quiz2_score', 'endterm_score', 'assignment_score']
@@ -250,7 +249,7 @@ def student_result(request, username, sem):
 	user = Student.objects.get(user=request.user)
 	filename = user.roll_no + '.pdf'
 	BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-	filepath = BASE_DIR + f'\\media\\result\\{user.batch}-Batch\\Sem-{sem}\\' + filename
+	filepath = BASE_DIR + f'/media/result/{user.batch}-Batch/Sem-{sem}/' + filename
 
 	if not os.path.exists(filepath):
 		return redirect(f'/student/{username}/result/')
@@ -446,7 +445,7 @@ def timetable_exam(request, username):
 
 	filename = 'Exam.pdf'
 	BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-	filepath = BASE_DIR + f'\\media\\timetable\\' + filename
+	filepath = BASE_DIR + f'/media/timetable/' + filename
 
 	if not os.path.exists(filepath):
 		if Student.objects.filter(user=request.user).exists():
@@ -466,7 +465,7 @@ def timetable_class(request, username):
 
 	filename = 'Class.pdf'
 	BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-	filepath = BASE_DIR + f'\\media\\timetable\\' + filename
+	filepath = BASE_DIR + f'/media/timetable/' + filename
 
 	if not os.path.exists(filepath):
 		if Student.objects.filter(user=request.user).exists():
@@ -548,7 +547,7 @@ def password_reset(request):
 					email_template_name = "password_reset_email.txt"
 					c = {
 						'email':user.email,
-						'domain':'127.0.0.1:8000',
+						'domain':'my-space-webapp.herokuapp.com',
 						'site_name': 'mySpace',
 						'uid': urlsafe_b64encode(force_bytes(user.pk)).decode(),
 						'user': user,
