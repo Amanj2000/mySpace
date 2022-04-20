@@ -208,7 +208,7 @@ class InstReq(models.Model):
         unique_together = (('faculty', 'cert_req'), )
 
     def __str__(self):
-        return self.faculty.user.username + '_' + self.cert_req.id
+        return self.faculty.user.username + '_' + str(self.cert_req.id)
 
 class StudReq(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -218,7 +218,7 @@ class StudReq(models.Model):
         unique_together = (('student', 'cert_req'), )
     
     def __str__(self):
-        return self.student.user.username + '_' + self.cert_req.id
+        return self.student.user.username + '_' + str(self.cert_req.id)
 
 class AdminReview(models.Model):
     admin = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -229,7 +229,7 @@ class AdminReview(models.Model):
         unique_together = (('admin', 'cert_req'), )
 
     def __str__(self):
-        return self.admin.username + '_' + self.cert_req.id
+        return self.admin.username + '_' + str(self.cert_req.id)
 
 class AdminPublish(models.Model):
     admin = models.ForeignKey(User, on_delete=models.CASCADE)

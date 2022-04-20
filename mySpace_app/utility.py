@@ -1,4 +1,13 @@
-from .models import User, Faculty, Course, InstTeaches, StudTakes, InstOf, StudPartOf, Student
+from django.shortcuts import redirect
+from .models import Faculty, Course, InstTeaches, StudTakes, InstOf, StudPartOf, Student
+
+def checkUser(request, username):
+    if request.user.is_anonymous:
+        return redirect('/login')
+    elif request.user.username != username:
+        return redirect('/')
+    return None
+
 
 def factTeaches(user, course_id):
     user = Faculty.objects.get(user=user)

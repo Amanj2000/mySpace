@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 
 from .models import CourseDetails, Fines, InstOf, InstPublish, InstReq, InstTeaches, Section, SecCanRead, StudPartOf, StudReq, User, Student, Faculty, Course, Notice, CertReq, SemFee, MessFee, Result, StudTakes
 from .file import processCSV, processExcel
-from .utility import factTeaches, getFaculty
+from .utility import checkUser, factTeaches, getFaculty
 
 # Create your views here.
 def home(request):
@@ -50,23 +50,35 @@ def faculty(request):
 	return redirect(f'/faculty/{request.user.username}')
 
 def faculty_home(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	user = Faculty.objects.get(user=request.user)
+	try:
+		user = Faculty.objects.get(user=request.user)
+	except Exception as e:
+		return redirect('/')
 	return render(request,"faculty_templates/faculty_home.html",{"name":user})
 
 def faculty_profile(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	faculty = Faculty.objects.get(user=request.user)
+	try:
+		faculty = Faculty.objects.get(user=request.user)
+	except Exception as e:
+		return redirect('/')
 	return render(request, 'faculty_templates/faculty_profile.html', {'faculty' : faculty})
 
 def faculty_course_home(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	user = Faculty.objects.get(user=request.user)
-	teaches = InstTeaches.objects.filter(faculty=user)
-
+	try:
+		user = Faculty.objects.get(user=request.user)
+		teaches = InstTeaches.objects.filter(faculty=user)
+	except Exception as e:
+		return redirect('/')
+	
 	courses = []
 	for entry in teaches:
 		courses.append(entry.course)
@@ -74,11 +86,15 @@ def faculty_course_home(request, username):
 	return render(request, 'faculty_templates/faculty_course_home.html', {'courses': courses})
 
 def faculty_course(request, username, course_id):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	_faculty = Faculty.objects.get(user=request.user)
-	_course = Course.objects.get(id=course_id)
-	_inst_teaches = InstTeaches.objects.get(faculty=_faculty, course=_course)
+	try:
+		_faculty = Faculty.objects.get(user=request.user)
+		_course = Course.objects.get(id=course_id)
+		_inst_teaches = InstTeaches.objects.get(faculty=_faculty, course=_course)
+	except Exception as e:
+		return redirect('/')
 	if request.method == 'POST':
 		course_mat = CourseDetails(inst_teaches= _inst_teaches, details=request.FILES.get('File'))
 		course_mat.save()
@@ -91,12 +107,16 @@ def faculty_course(request, username, course_id):
 
 
 def show_material(request, username, course_id, filename):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	if Student.objects.filter(user=request.user).exists():
-		faculty_name = getFaculty(request.user, course_id).faculty.user.username
-	else:
-		faculty_name = username
+	try:
+		if Student.objects.filter(user=request.user).exists():
+			faculty_name = getFaculty(request.user, course_id).faculty.user.username
+		else:
+			faculty_name = username
+	except Exception:
+		return redirect('/')
 
 	BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 	course_name = Course.objects.get(id=course_id).course_name
@@ -115,11 +135,14 @@ def show_material(request, username, course_id, filename):
 	return response
 
 def faculty_perf_home(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	user = Faculty.objects.get(user=request.user)
-	teaches = InstTeaches.objects.filter(faculty=user)
-
+	try:
+		user = Faculty.objects.get(user=request.user)
+		teaches = InstTeaches.objects.filter(faculty=user)
+	except Exception as e:
+		return redirect('/')
 	courses = []
 	for entry in teaches:
 		courses.append(entry.course)
@@ -127,9 +150,13 @@ def faculty_perf_home(request, username):
 	return render(request, 'faculty_templates/faculty_perf_home.html', {'courses': courses})
 
 def faculty_perf(request, username, course_id):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	course, stud_allowed = factTeaches(request.user, course_id)
+	try:
+		course, stud_allowed = factTeaches(request.user, course_id)
+	except Exception:
+		return redirect('/')
 	if request.method == 'POST':
 		#Process File
 		file = request.FILES.get('File')
@@ -161,11 +188,14 @@ def faculty_perf(request, username, course_id):
 	return render(request, 'faculty_templates/faculty_perf.html', {'course_id': course_id, 'marks': marks})
 
 def faculty_notice_home(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	user = Faculty.objects.get(user=request.user)
-	published = InstPublish.objects.filter(faculty=user)
-
+	try:
+		user = Faculty.objects.get(user=request.user)
+		published = InstPublish.objects.filter(faculty=user)
+	except Exception as e:
+		return redirect('/')
 	noticeList = []
 	for entry in published:
 		noticeList.append({'note': entry.notice, 'published' :entry.published_on})
@@ -173,8 +203,12 @@ def faculty_notice_home(request, username):
 	return render(request, 'faculty_templates/faculty_notice_home.html', {'notices': noticeList})
 
 def faculty_notice_publish(request: HttpRequest, username):
-	if request.user.is_anonymous: return redirect('/login')
-	user = Faculty.objects.get(user=request.user)
+	res = checkUser(request, username)
+	if res: return res
+	try:
+		user = Faculty.objects.get(user=request.user)
+	except Exception as e:
+		return redirect('/')
 	if request.method == 'POST':
 		notice = Notice(notice_name=request.POST.get('notice_name'), content=request.POST.get('content'))
 		notice.save()
@@ -191,10 +225,14 @@ def faculty_notice_publish(request: HttpRequest, username):
 		return render(request, 'faculty_templates/faculty_notice_publish.html', {'sections': sections})
 
 def faculty_notice_edit(request, username, notice_id):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	user = Faculty.objects.get(user=request.user)
-	notice = Notice.objects.get(id=notice_id)
+	try:
+		user = Faculty.objects.get(user=request.user)
+		notice = Notice.objects.get(id=notice_id)
+	except Exception as e:
+		return redirect('/')
 	if request.method == 'POST':
 		notice.delete()
 		notice = Notice(notice_name=request.POST.get('notice_name'), content=request.POST.get('content'))
@@ -225,28 +263,44 @@ def student(request):
 	return redirect(f'/student/{request.user.username}')
 
 def student_home(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	user = Student.objects.get(user=request.user)
+	try:
+		user = Student.objects.get(user=request.user)
+	except Exception as e:
+		return redirect('/')
 	return render(request,"student_templates/student_home.html",{"name":user})
 
 def student_profile(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	student = Student.objects.get(user=request.user)
+	try:
+		student = Student.objects.get(user=request.user)
+	except Exception as e:
+		return redirect('/')
 	return render(request, 'student_templates/student_profile.html', {'student' : student})
 
 def student_result_home(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	user = Student.objects.get(user=request.user)
-	result = Result.objects.filter(student=user)
+	try:
+		user = Student.objects.get(user=request.user)
+		result = Result.objects.filter(student=user)
+	except Exception as e:
+		return redirect('/')
 	return render(request, 'student_templates/student_result.html', {'sem': range(1, len(result)+1)})
 
 def student_result(request, username, sem):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	user = Student.objects.get(user=request.user)
+	try:
+		user = Student.objects.get(user=request.user)
+	except Exception as e:
+		return redirect('/')
 	filename = user.roll_no + '.pdf'
 	BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 	filepath = BASE_DIR + f'/media/result/{user.batch}-Batch/Sem-{sem}/' + filename
@@ -261,10 +315,14 @@ def student_result(request, username, sem):
 		return response
 
 def student_course_home(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	user = Student.objects.get(user=request.user)
-	takes = StudTakes.objects.filter(student=user)
+	try:
+		user = Student.objects.get(user=request.user)
+		takes = StudTakes.objects.filter(student=user)
+	except Exception as e:
+		return redirect('/')
 
 	all_course = []
 	for entry in takes:
@@ -272,20 +330,28 @@ def student_course_home(request, username):
 	return render(request, 'student_templates/student_course_home.html', {'courses': all_course})
 
 def student_course(request, username, course_id):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	_inst_teaches = getFaculty(request.user, course_id)
-	material = CourseDetails.objects.filter(inst_teaches=_inst_teaches)
+	try:
+		_inst_teaches = getFaculty(request.user, course_id)
+		material = CourseDetails.objects.filter(inst_teaches=_inst_teaches)
+	except Exception as e:
+		return redirect('/')
 	files = []
 	for entry in material:
 		files.append(os.path.basename(entry.details.name))
 	return render(request, 'student_templates/student_course.html', {'files': files, 'course_id': course_id})
 
 def student_perf_home(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	user = Student.objects.get(user=request.user)
-	takes = StudTakes.objects.filter(student=user)
+	try:
+		user = Student.objects.get(user=request.user)
+		takes = StudTakes.objects.filter(student=user)
+	except Exception as e:
+		return redirect('/')
 
 	all_course = []
 	for entry in takes:
@@ -293,11 +359,15 @@ def student_perf_home(request, username):
 	return render(request, 'student_templates/student_perf_home.html', {'courses': all_course})
 
 def student_perf(request, username, course_id):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	user = Student.objects.get(user=request.user)
-	_course = Course.objects.get(id=course_id)
-	course = StudTakes.objects.get(student=user, course=_course)
+	try:
+		user = Student.objects.get(user=request.user)
+		_course = Course.objects.get(id=course_id)
+		course = StudTakes.objects.get(student=user, course=_course)
+	except Exception as e:
+		return redirect('/')
 	contents = {
 		'quiz1': course.quiz1_score if course.quiz1_score else '-',
 		'quiz2': course.quiz2_score if course.quiz2_score else '-',
@@ -308,11 +378,15 @@ def student_perf(request, username, course_id):
 	return render(request, 'student_templates/student_perf.html', contents)
 
 def student_notice_home(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	user = Student.objects.get(user=request.user)
-	partOf = StudPartOf.objects.get(student=user)
-	canRead = SecCanRead.objects.filter(section=partOf.section)
+	try:
+		user = Student.objects.get(user=request.user)
+		partOf = StudPartOf.objects.get(student=user)
+		canRead = SecCanRead.objects.filter(section=partOf.section)
+	except Exception as e:
+		return redirect('/')
 
 	all_notice = []
 	for entry in canRead:
@@ -320,9 +394,13 @@ def student_notice_home(request, username):
 	return render(request, 'student_templates/student_notice_home.html', {'notices': all_notice})
 
 def notice_view(request, username, notice_id):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	notice = Notice.objects.get(id=notice_id)
+	try:
+		notice = Notice.objects.get(id=notice_id)
+	except Exception as e:
+		return redirect('/')
 	contents = {
 		'name': notice.notice_name,
 		'content': notice.content,
@@ -334,15 +412,20 @@ def notice_view(request, username, notice_id):
 		return render(request, 'faculty_templates/notice_view.html', contents)
 
 def student_fee_payment_home(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
 	return render(request, 'student_templates/student_fee_payment_home.html')
 
 def student_fee_payment_mess(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	user = Student.objects.get(user=request.user)
-	mess_fee_entries = MessFee.objects.filter(student=user)
+	try:
+		user = Student.objects.get(user=request.user)
+		mess_fee_entries = MessFee.objects.filter(student=user)
+	except Exception as e:
+		return redirect('/')
 
 	all_entries = []
 	total_due = 0
@@ -368,10 +451,14 @@ def student_fee_payment_mess(request, username):
 	return render(request, 'student_templates/student_fee_payment_mess.html', content)
 
 def student_fee_payment_tuition(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	user = Student.objects.get(user=request.user)
-	sem_fee_entries = SemFee.objects.filter(student=user)
+	try:
+		user = Student.objects.get(user=request.user)
+		sem_fee_entries = SemFee.objects.filter(student=user)
+	except Exception as e:
+		return redirect('/')
 
 	all_entries = []
 	tuition_due = 0
@@ -405,11 +492,14 @@ def student_fee_payment_tuition(request, username):
 	return render(request, 'student_templates/student_fee_payment_tuition.html', content)
 
 def student_fee_payment_fine(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
-	user = Student.objects.get(user=request.user)
-	fine_entries = Fines.objects.filter(student=user)
-
+	try:
+		user = Student.objects.get(user=request.user)
+		fine_entries = Fines.objects.filter(student=user)
+	except Exception as e:
+		return redirect('/')
 	all_entries = []
 	total_due = 0
 	total_paid = 0
@@ -433,7 +523,8 @@ def student_fee_payment_fine(request, username):
 	return render(request, 'student_templates/student_fee_payment_fine.html', content)
 
 def timetable(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
 	if Student.objects.filter(user=request.user).exists():
 		return render(request, 'student_templates/student_timetable.html')
@@ -441,7 +532,8 @@ def timetable(request, username):
 		return render(request, 'faculty_templates/faculty_timetable.html')
 
 def timetable_exam(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
 	filename = 'Exam.pdf'
 	BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -461,7 +553,8 @@ def timetable_exam(request, username):
 	return response
 
 def timetable_class(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
 	filename = 'Class.pdf'
 	BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -480,7 +573,8 @@ def timetable_class(request, username):
 	return response
 
 def cert_req_home(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
 	if Student.objects.filter(user=request.user).exists():
 		user = Student.objects.get(user=request.user)
@@ -498,7 +592,8 @@ def cert_req_home(request, username):
 		return render(request, 'faculty_templates/cert_req_home.html', {'requests': all_request})
 
 def cert_req_new(request, username):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
 	if request.method == 'POST':
 		cert_req = CertReq(type=request.POST.get('type'), add_info=request.POST.get('additional-info'))
@@ -518,7 +613,8 @@ def cert_req_new(request, username):
 			return render(request, 'faculty_templates/cert_req_new.html')
 
 def cert_req_view(request, username, cert_id):
-	if request.user.is_anonymous: return redirect('/login')
+	res = checkUser(request, username)
+	if res: return res
 
 	cert = CertReq.objects.get(id=cert_id)
 	contents = {
@@ -552,7 +648,7 @@ def password_reset(request):
 						'uid': urlsafe_b64encode(force_bytes(user.pk)).decode(),
 						'user': user,
 						'token': default_token_generator.make_token(user),
-						'protocol': 'http',
+						'protocol': 'https',
 					}
 					email = render_to_string(email_template_name, c)
 					try:
