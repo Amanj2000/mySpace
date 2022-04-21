@@ -20,6 +20,8 @@ https://my-space-webapp.herokuapp.com/
 | **Faculty:**  | Faculty      | fact@123     |
 | **Student:**  | Harsh        | stud@123     |
 
+SRS, Diagrams and Testing Report can be found under "Documentation"
+
 For more details, refer to: https://github.com/Amanj2000/mySpace/blob/main/Documentation/SRS.pdf
 
 ## Team Members
