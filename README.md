@@ -24,6 +24,28 @@ SRS, Diagrams and Testing Report can be found under "Documentation"
 
 For more details, refer to: https://github.com/Amanj2000/mySpace/blob/main/Documentation/SRS.pdf
 
+## Advantages
+
+Our project will adhere to, but not be limited to, the following:
+
+-   **Complete Control:** With mySpace, every section of the institute could be
+    managed from a single platform. It offers full control to monitor, manage, and
+    access all the resources such as Exam Details, Fees Details, Timetable for the day
+    and much more from a single platform.
+-   **Time Saving:** Since we will be implementing an “Everything under One Roof”
+    policy, the time spent on accessing various different resources for a specific task
+    will be eliminated.
+-   **No Need of Paperwork:** Since this will be a completely computerised approach
+    to the storing and accessing information, the need of storing and handling
+    paperwork is eliminated.
+-   E**asy Accessibility:** The administrator holds the full rights to all the information
+    within the infrastructure. They can make changes to vital details instantly and
+    keep an eye on any goof-ups in the data.
+-   **Beneficial for the Students:** While the software will make the job of faculty and
+    administrators easy, it will also help the students in many ways. Students can
+    check the schedule for different courses and exams without hovering over the
+    notice board.
+
 ## Team Members
 
 | **Roll Number** | **Name**       |
